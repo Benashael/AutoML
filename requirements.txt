@@ -4,3 +4,5 @@ numpy
 scikit-learn
 tpot
 apyori
+matplotlib
+seaborn
