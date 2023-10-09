@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.cluster import KMeans
 from apyori import apriori  # Import apyori for association rule mining
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn import datasets
 
 # Title and Description
 st.title("AutoML App with Streamlit")
@@ -13,14 +15,14 @@ st.title("AutoML App with Streamlit")
 # Multi-page navigation
 app_mode = st.sidebar.selectbox("Select a page:", ["Data Visualization", "AutoML Tasks"])
 
-@st.cache
+@st.cache_data
 def load_example_dataset(dataset_name):
     if dataset_name == "Iris Dataset":
         return datasets.load_iris(as_frame=True).frame
     elif dataset_name == "Diabetes Dataset":
         return datasets.load_diabetes(as_frame=True).frame
 
-@st.cache
+@st.cache_data
 def load_uploaded_dataset(uploaded_file):
     return pd.read_csv(uploaded_file)
 
