@@ -5,9 +5,7 @@ from tpot import TPOTClassifier, TPOTRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from apyori import apriori  # Import apyori for association rule mining
-from sklearn import datasets
 
 # Title and Description
 st.title("AutoML App with Streamlit")
@@ -27,20 +25,8 @@ def load_uploaded_dataset(uploaded_file):
     return pd.read_csv(uploaded_file)
 
 def mine_association_rules(data, min_support, min_confidence):
-    # Data preprocessing
-    data_encoded = pd.get_dummies(data)
-
-    # Extract transactions from the dataset
-    transactions = []
-    for index, row in data_encoded.iterrows():
-        transaction = set()
-        for col_name in data_encoded.columns:
-            if row[col_name] == 1:
-                transaction.add(col_name)
-        transactions.append(transaction)
-
-    # Perform association rule mining with apyori
-    association_results = list(apriori(transactions, min_support=min_support, min_confidence=min_confidence))
+    # Perform association rule mining
+    association_results = list(apriori(data, min_support=min_support, min_confidence=min_confidence))
 
     return association_results
 
@@ -136,25 +122,42 @@ elif app_mode == "AutoML Tasks":
                 elif task == "Clustering":
                     data = load_example_dataset("Iris Dataset")
                 elif task == "Association":
-                    data = load_example_dataset("Iris Dataset")
+                    data = [
+                        ["milk", "bread", "nuts", "apples"],
+                        ["milk", "bread", "diapers", "eggs"],
+                        ["milk", "eggs", "yogurt"],
+                        ["bread", "nuts", "apples"],
+                        ["milk", "bread", "nuts", "diapers", "eggs"],
+                        ["eggs", "diapers", "yogurt"],
+                        ["milk", "apples", "yogurt"],
+                        ["bread", "nuts", "yogurt"],
+                        ["bread", "nuts", "apples", "yogurt"],
+                        ["milk", "bread", "nuts", "apples", "yogurt"],
+                        ["milk", "diapers"],
+                        ["bread", "nuts", "diapers"],
+                        ["milk", "bread", "nuts", "apples", "diapers"],
+                        ["milk", "eggs", "yogurt"],
+                        ["milk", "bread", "nuts", "eggs", "yogurt"],
+                    ]
 
             else:
                 # Use uploaded dataset
                 data = load_uploaded_dataset(uploaded_file)
 
             # Check if there are at least two columns
-            if data.shape[1] < 2:
+            if isinstance(data, pd.DataFrame) and data.shape[1] < 2:
                 st.error("The dataset must have at least two columns.")
 
             # Display dataset details
-            st.write("Dataset description:")
-            st.write(data.describe())
+            if isinstance(data, pd.DataFrame):
+                st.write("Dataset description:")
+                st.write(data.describe())
 
             if task == "Classification":
                 # Classification: User selects target column and trains a classification model
                 st.subheader("Classification Task")
                 target_column = st.selectbox("Select the target column:", data.columns)
-                                X = data.drop(columns=[target_column])
+                X = data.drop(columns=[target_column])
                 y = data[target_column]
 
                 # Check if the target column exists
@@ -243,7 +246,7 @@ elif app_mode == "AutoML Tasks":
                 min_confidence = st.slider("Select minimum confidence:", 0.1, 1.0, 0.5)
 
                 # Check if the dataset has enough rows for association rule mining
-                if data.shape[0] < 2:
+                if isinstance(data, list) and len(data) < 2:
                     st.error("The dataset must have at least two rows for association rule mining.")
                 else:
                     # Perform association rule mining
