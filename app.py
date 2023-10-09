@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans
 from apyori import apriori  # Import apyori for association rule mining
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn import datasets
+import matplotlib.pyplot as plt
+import seaborn
 
 # Title and Description
 st.title("AutoML App with Streamlit")
