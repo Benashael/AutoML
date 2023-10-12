@@ -303,8 +303,8 @@ elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
     # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 10000
-    max_columns_for_evaluation = 100
+    max_rows_for_evaluation = 5000
+    max_columns_for_evaluation = 50
 
     if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
         st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
@@ -329,15 +329,15 @@ elif page == "Model Evaluation":
                 X = data[X_columns]
                 y = data[y_column]
 
-                # Map model names to their respective classes
-                model_classes = {
-                    "Random Forest Classifier": RandomForestClassifier,
-                    "Random Forest Regressor": RandomForestRegressor,
-                    "Linear Regression": LinearRegression,
-                }
+                # Select Model
+                model_name = st.selectbox("Select Model", ["Random Forest Classifier", "Random Forest Regressor", "Linear Regression"])
 
-                model_class = model_classes[model_name]
-                model = model_class()
+                if model_name == "Random Forest Classifier":
+                    model = RandomForestClassifier()
+                elif model_name == "Random Forest Regressor":
+                    model = RandomForestRegressor()
+                elif model_name == "Linear Regression":
+                    model = LinearRegression()
 
                 if problem_type == "Classification":
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
