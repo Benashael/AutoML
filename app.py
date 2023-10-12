@@ -107,36 +107,59 @@ if page == "Home Page":
         "Enjoy using the AutoML Application and have a productive data analysis and model selection experience!"
     )
 
+# Data Cleaning Page
 elif page == "Data Cleaning":
-    st.title("Data Cleaning App Page")
+    st.title("Data Cleaning Page")
+
+    # Check if the dataset is available
     if data is not None:
         st.write("Dataset:")
         st.write(data)
-    
-        if st.checkbox("Show Summary Stats"):
-            st.write("Summary Statistics:")
-            st.write(data.describe())
-    
-        st.write("Missing Values:")
-        st.write(data.isnull().sum())
-    
-        if st.checkbox("Handle Missing Values"):
-            st.subheader("Handle Missing Values")
-            operation = st.radio("Select Operation", ["Drop Rows", "Impute with Mean", "Impute with Median", "Custom Value"])
-            if operation == "Drop Rows":
-                data = data.dropna()
-            elif operation == "Impute with Mean":
-                data = data.fillna(data.mean())
-            elif operation == "Impute with Median":
-                data = data.fillna(data.median())
+        st.write("Dataset Shape:")
+        st.write(data.shape)
+
+        # Check if the dataset has too many rows or columns
+        max_rows_for_cleaning = 3500
+        max_columns_for_cleaning = 50
+
+        if data.shape[0] > max_rows_for_cleaning or data.shape[1] > max_columns_for_cleaning:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for data cleaning (max rows: {max_rows_for_cleaning}, max columns: {max_columns_for_cleaning}).")
+        else:
+            # Check if there are categorical features
+            categorical_features = data.select_dtypes(include=['object']).columns.tolist()
+
+            if not categorical_features:
+                st.warning("Note: The dataset has no categorical features, so you cannot use the 'mean' or 'median' methods.")
             else:
-                custom_value = st.number_input("Enter Custom Value", value=0)
-                data = data.fillna(custom_value)
-    
-        st.write("Data After Handling Missing Values:")
-        st.write(data)
+                st.write("Categorical Features:")
+                st.write(categorical_features)
+
+            # Choose missing value handling method
+            st.subheader("Missing Value Handling")
+            methods = ["Drop Missing Values", "Custom Value"]
+            if categorical_features:
+                methods.extend(["Mean", "Median"])
+
+            method = st.selectbox("Select a method:", methods)
+
+            if method == "Drop Missing Values":
+                data_cleaned = data.dropna()
+                st.write("Dropped missing values.")
+                st.write(data_cleaned)
+
+            elif method == "Custom Value":
+                custom_value = st.text_input("Enter a custom value to fill missing cells:", "0")
+                data_cleaned = data.fillna(custom_value)
+                st.write(f"Filled missing values with custom value: {custom_value}")
+                st.write(data_cleaned)
+
+            elif method == "Mean" and categorical_features:
+                st.warning("Mean method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
+
+            elif method == "Median" and categorical_features:
+                st.warning("Median method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
     else:
-        st.warning("Please upload a dataset to continue.")
+        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "Data Encoding":
     st.title("Data Encoding App Page")
