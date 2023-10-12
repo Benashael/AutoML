@@ -111,37 +111,54 @@ elif page == "ML Model Selection":
     if data is not None:
         st.write("Dataset:")
         st.write(data)
-    
-        st.subheader("Select Problem Type")
-        problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
-        
-        target_variable = st.selectbox("Select Target Variable", data.columns)
+        st.write("Dataset Shape:")
+        st.write(data.shape)
 
-        if problem_type == "Classification":
-            st.write(f"Example: Recommend Classification Models using Scikit-learn for '{target_variable}'")
-            X = data.drop(target_variable, axis=1)
-            y = data[target_variable]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            st.write("Classification Models:")
-            classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
-            for model in classification_models:
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
-                st.write(f"Model: {type(model).__name__}")
-                st.write(f"Accuracy Score: {accuracy_score(y_test, y_pred)}")
+        # Define the maximum allowed dataset size for ML model selection
+        max_rows_for_ml_selection = 5000
+        max_columns_for_ml_selection = 50
 
-        elif problem_type == "Regression":
-            st.write(f"Example: Recommend Regression Models using Scikit-learn for '{target_variable}'")
-            X = data.drop(target_variable, axis=1)
-            y = data[target_variable]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            st.write("Regression Models:")
-            regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
-            for model in regression_models:
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
-                st.write(f"Model: {type(model).__name__}")
-                st.write(f"Mean Squared Error: {mean_squared_error(y_test, y_pred)}")
+        if data.shape[0] > max_rows_for_ml_selection or data.shape[1] > max_columns_for_ml_selection:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for ML model selection (max rows: {max_rows_for_ml_selection}, max columns: {max_columns_for_ml_selection}).")
+        else:
+            st.subheader("Select Problem Type")
+            problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
+
+            if problem_type == "Classification":
+                st.write("Example: Recommend Classification Models using Scikit-learn")
+            else:
+                st.write("Example: Recommend Regression Models using Scikit-learn")
+
+            target_variable = st.selectbox("Select Target Variable", data.columns)
+
+            X_columns = [col for col in data.columns if col != target_variable]
+            selected_columns = st.multiselect("Select Features (X)", X_columns)
+
+            if not selected_columns:
+                st.warning("Please select one or more features (X) before running the ML model selection.")
+            else:
+                if problem_type == "Classification":
+                    X = data[selected_columns]
+                    y = data[target_variable]
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                    st.write("Classification Models:")
+                    classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
+                    for model in classification_models:
+                        model.fit(X_train, y_train)
+                        y_pred = model.predict(X_test)
+                        st.write(f"Model: {type(model).__name__}")
+                        st.write(f"Accuracy Score: {accuracy_score(y_test, y_pred)}")
+                elif problem_type == "Regression":
+                    X = data[selected_columns]
+                    y = data[target_variable]
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                    st.write("Regression Models:")
+                    regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
+                    for model in regression_models:
+                        model.fit(X_train, y_train)
+                        y_pred = model.predict(X_test)
+                        st.write(f"Model: {type(model).__name__}")
+                        st.write(f"Mean Squared Error: {mean_squared_error(y_test, y_pred)}")
     else:
         st.warning("Please upload a dataset to continue.")
 
