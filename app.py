@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, mean_squared_error, classification_report
+from sklearn.metrics import accuracy_score, mean_squared_error, classification_report,  f1_score, mean_absolute_error, r2_score
 from sklearn.svm import SVC, SVR
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
@@ -441,7 +441,7 @@ elif page == "Model Evaluation":
 
                         # Calculate evaluation metrics
                         accuracy = accuracy_score(y_test, y_pred)
-                        f1 = f1_score(y_test, y_pred)
+                        f1 = f1_score(y_test, y_pred, average="weighted")
 
                         st.write(f"Selected Classification Model: {selected_model}")
                         st.write(f"X Variable: {x_variable}")
