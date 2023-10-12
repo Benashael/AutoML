@@ -8,21 +8,27 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, mean_squared_error
 
 # Define a function to load your dataset
 @st.cache
 def load_data():
-    # Load your dataset here using Pandas
     data = pd.read_csv("your_dataset.csv")
     return data
+
+# Upload a dataset
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+else:
+    data = load_data()
 
 # Create Streamlit pages
 page = st.sidebar.selectbox("Select a Page", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Regression", "AutoML for Classification", "AutoML for Clustering"])
 
 if page == "Data Cleaning":
     st.title("Data Cleaning App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -35,7 +41,7 @@ if page == "Data Cleaning":
     
     if st.checkbox("Handle Missing Values"):
         st.subheader("Handle Missing Values")
-        operation = st.radio("Select Operation", ("Drop Rows", "Impute with Mean", "Impute with Median", "Custom Value"))
+        operation = st.radio("Select Operation", ["Drop Rows", "Impute with Mean", "Impute with Median", "Custom Value"])
         if operation == "Drop Rows":
             data = data.dropna()
         elif operation == "Impute with Mean":
@@ -51,7 +57,6 @@ if page == "Data Cleaning":
 
 elif page == "Data Encoding":
     st.title("Data Encoding App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -59,7 +64,7 @@ elif page == "Data Encoding":
     categorical_cols = data.select_dtypes(include=["object"]).columns
     for col in categorical_cols:
         st.write(f"Encoding '{col}' column")
-        encoding_option = st.radio("Select Encoding Method", ("Label Encoding", "One-Hot Encoding"))
+        encoding_option = st.radio("Select Encoding Method", ["Label Encoding", "One-Hot Encoding"])
         if encoding_option == "Label Encoding":
             le = LabelEncoder()
             data[col] = le.fit_transform(data[col])
@@ -71,7 +76,6 @@ elif page == "Data Encoding":
 
 elif page == "Data Visualization":
     st.title("Data Visualization App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -85,7 +89,6 @@ elif page == "Data Visualization":
 
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -97,8 +100,9 @@ elif page == "ML Model Selection":
         X = data.drop("target_column", axis=1)
         y = data["target_column"]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        models = [RandomForestClassifier()]
-        for model in models:
+        st.write("Classification Models:")
+        classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
+        for model in classification_models:
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             st.write(f"Model: {type(model).__name__}")
@@ -109,8 +113,9 @@ elif page == "ML Model Selection":
         X = data.drop("target_column", axis=1)
         y = data["target_column"]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        models = [RandomForestRegressor()]
-        for model in models:
+        st.write("Regression Models:")
+        regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
+        for model in regression_models:
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             st.write(f"Model: {type(model).__name__}")
@@ -118,7 +123,6 @@ elif page == "ML Model Selection":
 
 elif page == "AutoML for Regression":
     st.title("AutoML for Regression App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -135,7 +139,6 @@ elif page == "AutoML for Regression":
     
     st.write("Regression Models:")
     regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
-    
     for model in regression_models:
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
@@ -144,7 +147,6 @@ elif page == "AutoML for Regression":
 
 elif page == "AutoML for Classification":
     st.title("AutoML for Classification App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
     
@@ -161,7 +163,6 @@ elif page == "AutoML for Classification":
     
     st.write("Classification Models:")
     classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
-    
     for model in classification_models:
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
@@ -170,7 +171,6 @@ elif page == "AutoML for Classification":
 
 elif page == "AutoML for Clustering":
     st.title("AutoML for Clustering App Page")
-    data = load_data()
     st.write("Dataset:")
     st.write(data)
 
