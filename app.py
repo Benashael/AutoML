@@ -83,7 +83,7 @@ elif page == "Data Encoding":
                 le = LabelEncoder()
                 data[col_to_encode] = le.fit_transform(data[col_to_encode])
             else:
-                data = pd.get dummies(data, columns=[col_to_encode], prefix=[col_to_encode])
+                data = pd.get_dummies(data, columns=[col_to_encode], prefix=[col_to_encode])
             
             st.write("Data After Encoding Categorical Variables:")
             st.write(data)
