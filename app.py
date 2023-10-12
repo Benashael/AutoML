@@ -302,65 +302,76 @@ elif page == "AutoML for Clustering":
 elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
-    # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 5000
-    max_columns_for_evaluation = 50
+    # Check if the dataset is available
+    if data is not None:
+        st.write("Dataset:")
+        st.write(data)
+        st.write("Dataset Shape:")
+        st.write(data.shape)
 
-    if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
-        st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
-    else:
-        # Select Problem Type
-        problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
+        # Define the maximum allowed dataset size for model evaluation
+        max_rows_for_evaluation = 10000
+        max_columns_for_evaluation = 100
 
-        if data is not None:
-            st.write("Dataset:")
-            st.write(data)
-            st.write("Dataset Shape:")
-            st.write(data.shape)
-
-            # Select Model
-            models = {
-                "Random Forest Classifier": RandomForestClassifier(),
-                "Random Forest Regressor": RandomForestRegressor(),
-                "Linear Regression": LinearRegression(),
-            }
-
-            model_name = st.selectbox("Select Model", list(models.keys()))
-
-            if st.button("Evaluate Model"):
-                model = models[model_name]
-
-                if problem_type == "Classification":
-                    X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
-                    y = data["target_column"]  # Replace "target_column" with the actual target column name
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-
-                    st.subheader("Classification Report")
-                    st.text(classification_report(y_test, y_pred))
-
-                    st.subheader("Accuracy Score")
-                    accuracy = accuracy_score(y_test, y_pred)
-                    st.text(accuracy)
-                else:
-                    X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
-                    y = data["target_column"]  # Replace "target_column" with the actual target column name
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-
-                    st.subheader("Mean Squared Error")
-                    mse = mean_squared_error(y_test, y_pred)
-                    st.text(mse)
-
-                    st.subheader("R-squared (R2) Score")
-                    r2 = r2_score(y_test, y_pred)
-                    st.text(r2)
+        if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
         else:
-            st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
+            # Select Problem Type
+            problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
+            
+            if problem_type == "Classification":
+                st.write("Select X and Y Variables for Classification:")
+            else:
+                st.write("Select X and Y Variables for Regression:")
+
+            # Select X Variables
+            X_columns = st.multiselect("Select Features (X)", data.columns)
+            
+            if not X_columns:
+                st.error("Please select one or more features (X) before proceeding.")
+            else:
+                # Select Y Variable
+                Y_column = st.selectbox("Select Target Variable (Y)", data.columns)
+                
+                if not Y_column:
+                    st.error("Please select a target variable (Y) before proceeding.")
+                else:
+                    X = data[X_columns]
+                    Y = data[Y_column]
+                    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+                    
+                    st.subheader(f"Model Evaluation for {problem_type}")
+                    
+                    # Select Model
+                    models = {
+                        "Random Forest Classifier": RandomForestClassifier(),
+                        "Random Forest Regressor": RandomForestRegressor(),
+                        "Linear Regression": LinearRegression(),
+                    }
+                    model_name = st.selectbox("Select Model", list(models.keys())
+                    
+                    if st.button("Evaluate Model"):
+                        model = models[model_name]
+                        model.fit(X_train, Y_train)
+                        Y_pred = model.predict(X_test)
+                        
+                        if problem_type == "Classification":
+                            st.subheader("Classification Report")
+                            st.text(classification_report(Y_test, Y_pred))
+                            
+                            st.subheader("Accuracy Score")
+                            accuracy = accuracy_score(Y_test, Y_pred)
+                            st.text(accuracy)
+                        else:
+                            st.subheader("Mean Squared Error")
+                            mse = mean_squared_error(Y_test, Y_pred)
+                            st.text(mse)
+                            
+                            st.subheader("R-squared (R2) Score")
+                            r2 = r2_score(Y_test, Y_pred)
+                            st.text(r2)
+    else:
+        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
             
 # Handle errors and optimize performance
 try:
