@@ -307,7 +307,7 @@ elif page == "Model Evaluation":
     max_rows_for_evaluation = 5000
     max_columns_for_evaluation = 50
 
-    if data.shape[0] > max_rows_for evaluation or data.shape[1] > max_columns_for_evaluation:
+    if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
         st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
     else:
         # Select Problem Type
