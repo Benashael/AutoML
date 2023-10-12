@@ -64,6 +64,8 @@ if page == "Data Cleaning":
     else:
         st.warning("Please upload a dataset to continue.")
 
+# ...
+
 elif page == "Data Encoding":
     st.title("Data Encoding App Page")
     if data is not None:
@@ -72,17 +74,22 @@ elif page == "Data Encoding":
     
         st.subheader("Encode Categorical Variables")
         categorical_cols = data.select_dtypes(include=["object"]).columns
-        for col in categorical_cols:
-            st.write(f"Encoding '{col}' column")
-            encoding_option = st.radio("Select Encoding Method", ["Label Encoding", "One-Hot Encoding"])
-            if encoding_option == "Label Encoding":
-                le = LabelEncoder()
-                data[col] = le.fit_transform(data[col])
-            else:
-                data = pd.get_dummies(data, columns=[col], prefix=[col])
-    
-        st.write("Data After Encoding Categorical Variables:")
-        st.write(data)
+        categorical_cols = [col for col in categorical_cols if data[col].nunique() > 1]  # Filter out columns with only 1 unique value
+
+        if not categorical_cols:
+            st.warning("No suitable categorical columns found for encoding.")
+        else:
+            for col in categorical_cols:
+                st.write(f"Encoding '{col}' column")
+                encoding_option = st.radio("Select Encoding Method", ["Label Encoding", "One-Hot Encoding"])
+                if encoding_option == "Label Encoding":
+                    le = LabelEncoder()
+                    data[col] = le.fit_transform(data[col])
+                else:
+                    data = pd.get_dummies(data, columns=[col], prefix=[col])
+        
+            st.write("Data After Encoding Categorical Variables:")
+            st.write(data)
     else:
         st.warning("Please upload a dataset to continue.")
 
