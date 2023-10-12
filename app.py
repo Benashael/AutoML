@@ -193,25 +193,33 @@ elif page == "AutoML for Regression":
         st.write(data.shape)
 
         st.subheader("AutoML for Regression")
-        target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
-        st.write("Select X Variables:")
-        X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
 
-        test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
-        random_state = st.slider("Select Random State", 1, 100, 42, 1)
-    
-        X = data[X_variables]
-        Y = data[target_variable]
+        # Define the maximum allowed dataset size for regression
+        max_rows_for_regression = 5000
+        max_columns_for_regression = 50
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
-    
-        st.write("Regression Models:")
-        regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
-        for model in regression_models:
-            model.fit(X_train, Y_train)
-            Y_pred = model.predict(X_test)
-            st.write(f"Model: {type(model).__name__}")
-            st.write(f"Mean Squared Error: {mean_squared_error(Y_test, Y_pred)}")
+        if data.shape[0] > max_rows_for_regression or data.shape[1] > max_columns_for_regression:
+            st.error(f"Dataset size exceeds the maximum allowed for regression (max rows: {max_rows_for_regression}, max columns: {max_columns_for_regression}).")
+        else:
+            target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+            st.write("Select X Variables:")
+            X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
+
+            test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
+            random_state = st.slider("Select Random State", 1, 100, 42, 1)
+
+            X = data[X_variables]
+            Y = data[target_variable]
+
+            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+
+            st.write("Regression Models:")
+            regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
+            for model in regression_models:
+                model.fit(X_train, Y_train)
+                Y_pred = model.predict(X_test)
+                st.write(f"Model: {type(model).__name__}")
+                st.write(f"Mean Squared Error: {mean_squared_error(Y_test, Y_pred)}")
     else:
         st.warning("Please upload a dataset to continue.")
         
