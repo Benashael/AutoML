@@ -32,9 +32,82 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
+page = st.sidebar.radio("**Select a Page**", ["Introduction", "Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
-if page == "Data Cleaning":
+# Introduction Page
+elif page == "Introduction":
+    st.title("Introduction")
+
+    st.header("Welcome to the AutoML Application!")
+    st.write("This application is designed to help you streamline the process of data analysis and machine learning model selection. Follow the steps below to make the most of this application:")
+
+    st.subheader("Home Page")
+    st.markdown(
+        "The **Home Page** is the starting point of the application. You can navigate to different sections of the app using the sidebar navigation."
+    )
+
+    st.subheader("Data Cleaning Page")
+    st.markdown(
+        "The **Data Cleaning Page** allows you to clean missing values in your dataset. Select a dataset and apply different cleaning techniques to handle missing values."
+    )
+
+    st.subheader("Data Encoding Page")
+    st.markdown(
+        "The **Data Encoding Page** empowers you to encode categorical variables in the dataset. Select a dataset and apply different encoding techniques to handle categorical variables."
+    )
+
+    st.subheader("Data Visualization Page")
+    st.markdown(
+        "The **Data Visualization Page** lets you visualize the dataset using various techniques such as histograms, scatter plots, and heat maps. Select a dataset and explore its visual representations."
+    )
+
+    st.subheader("ML Model Selection Page")
+    st.markdown(
+        "The **ML Model Selection Page** helps you choose the right machine learning model based on the problem type (classification, regression, or time series). Pick a dataset and select the target variable to find the best machine learning model."
+    )
+
+    st.subheader("AutoML for Regression Page")
+    st.markdown(
+        "The **AutoML for Regression Page** enables you to perform automated machine learning (AutoML) for regression problems using the `lazyRegression` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
+    )
+
+    st.subheader("AutoML for Classification Page")
+    st.markdown(
+        "The **AutoML for Classification Page** allows you to perform automated machine learning (AutoML) for classification problems using the `lazyClassifier` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
+    )
+
+    st.subheader("Model Evaluation Page")
+    st.markdown(
+        "The **Model Evaluation Page** is where you can evaluate machine learning models on your dataset. Choose the problem type (classification or regression), select X and Y variables, and pick a model to see evaluation results."
+    )
+
+    st.subheader("Using the App")
+    st.markdown(
+        "1. Start on the **Home Page**, and then navigate to the pages that match your needs."
+    )
+    st.markdown(
+        "2. Ensure you upload a dataset in the **Data Cleaning Page** before proceeding to other pages that require a dataset."
+    )
+    st.markdown(
+        "3. Use the sidebar navigation to switch between pages and follow the instructions on each page to complete the tasks."
+    )
+    st.markdown(
+        "4. Make sure to select the appropriate problem type (classification or regression) and follow any additional instructions for model selection and evaluation."
+    )
+
+    st.subheader("Additional Tips")
+    st.markdown(
+        "5. You can always refer back to the **Introduction** page for a quick overview of the app's functionality and how to use it."
+    )
+    st.markdown(
+        "6. Don't hesitate to reach out for assistance or if you have any questions about using the application effectively."
+    )
+
+    st.markdown(
+        "Enjoy using the AutoML Application and have a productive data analysis and model selection experience!"
+    )
+
+elif page == "Data Cleaning":
     st.title("Data Cleaning App Page")
     if data is not None:
         st.write("Dataset:")
