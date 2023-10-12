@@ -145,39 +145,42 @@ elif page == "ML Model Selection":
     else:
         st.warning("Please upload a dataset to continue.")
 
-elif page == "AutoML for Clustering":
-    st.title("AutoML for Clustering App Page")
+elif page == "AutoML for Classification":
+    st.title("AutoML for Classification App Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
         st.write("Dataset Shape:")
         st.write(data.shape)
 
-        st.subheader("AutoML for Clustering")
-        num_clusters = st.slider("Select the number of clusters:", 2, 10)
-        X = data.dropna()
+        st.subheader("AutoML for Classification")
 
-        if X.shape[0] < num_clusters:
-            st.error("Not enough data points for the selected number of clusters.")
+        # Define the maximum allowed dataset size for classification
+        max_rows_for_classification = 10000
+        max_columns_for_classification = 100
+
+        if data.shape[0] > max_rows_for_classification or data.shape[1] > max_columns_for_classification:
+            st.error(f"Dataset size exceeds the maximum allowed for classification (max rows: {max_rows_for_classification}, max columns: {max_columns_for_classification}).")
         else:
-            st.write("Select X and Y Variables:")
-            X_variable = st.selectbox("Select Features (X)", data.columns)
-            Y_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+            target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+            st.write("Select X Variables:")
+            X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
 
-            X = data[X_variable]
-            Y = data[Y_variable]
+            test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
+            random_state = st.slider("Select Random State", 1, 100, 42, 1)
 
-            # Perform one-hot encoding for categorical features
-            categorical_features = X.select_dtypes(include=['object']).columns.tolist()
-            if categorical_features:
-                X_encoded = pd.get_dummies(X, columns=categorical_features)
-            else:
-                X_encoded = X
+            X = data[X_variables]
+            Y = data[target_variable]
 
-            kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-            X_encoded['Cluster'] = kmeans.fit_predict(X_encoded)
-            st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
-            st.write(X_encoded)
+            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+
+            st.write("Classification Models:")
+            classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
+            for model in classification_models:
+                model.fit(X_train, Y_train)
+                Y_pred = model.predict(X_test)
+                st.write(f"Model: {type(model).__name__}")
+                st.write(f"Accuracy Score: {accuracy_score(Y_test, Y_pred)}")
     else:
         st.warning("Please upload a dataset to continue.")
 
@@ -211,21 +214,32 @@ elif page == "AutoML for Regression":
             st.write(f"Mean Squared Error: {mean_squared_error(Y_test, Y_pred)}")
     else:
         st.warning("Please upload a dataset to continue.")
-
+        
 elif page == "AutoML for Clustering":
     st.title("AutoML for Clustering App Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
+        st.write("Dataset Shape:")
+        st.write(data.shape)
 
         st.subheader("AutoML for Clustering")
         num_clusters = st.slider("Select the number of clusters:", 2, 10)
-        X = data.dropna()
 
-        # Check if there are enough data points for clustering
-        if X.shape[0] < num_clusters:
-            st.error("Not enough data points for the selected number of clusters.")
+        # Define the maximum allowed dataset size for clustering
+        max_rows_for_clustering = 5000
+        max_columns_for_clustering = 50
+
+        if data.shape[0] > max_rows_for_clustering or data.shape[1] > max_columns_for_clustering:
+            st.error(f"Dataset size exceeds the maximum allowed for clustering (max rows: {max_rows_for_clustering}, max columns: {max_columns_for_clustering}).")
         else:
+            st.write("Select X and Y Variables:")
+            X_variable = st.selectbox("Select Features (X)", data.columns)
+            Y_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+
+            X = data[X_variable]
+            Y = data[Y_variable]
+
             # Perform one-hot encoding for categorical features
             categorical_features = X.select_dtypes(include=['object']).columns.tolist()
             if categorical_features:
