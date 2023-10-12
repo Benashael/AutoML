@@ -400,8 +400,8 @@ elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
     # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 5000
-    max_columns_for_evaluation = 50
+    max_rows_for_evaluation = 10000
+    max_columns_for_evaluation = 100
 
     if data is not None:
         if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
@@ -425,33 +425,32 @@ elif page == "Model Evaluation":
                     model = SVC()
 
                 if model is not None:
-                    # Get X and Y variable names from the user
-                    x_variable = st.text_input("Enter the X variable name:")
-                    y_variable = st.text_input("Enter the Y variable name:")
+                    # Get X and Y variable names from the user using select boxes
+                    x_variable = st.selectbox("Select the X variable", data.columns)
+                    y_variable = st.selectbox("Select the Y variable", data.columns)
 
-                    if x_variable == "" or y_variable == "":
-                        st.error("Please enter both X and Y variable names.")
+                    # Validate variable names and perform data splitting
+                    if x_variable != y_variable:
+                        X = data[[x_variable]]
+                        y = data[y_variable]
+
+                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                        model.fit(X_train, y_train)
+                        y_pred = model.predict(X_test)
+
+                        # Calculate evaluation metrics
+                        accuracy = accuracy_score(y_test, y_pred)
+                        f1 = f1_score(y_test, y_pred, average="weighted")
+
+                        st.write(f"Selected Classification Model: {selected_model}")
+                        st.write(f"X Variable: {x_variable}")
+                        st.write(f"Y Variable: {y_variable}")
+                        st.write(f"Accuracy: {accuracy:.2f}")
+                        st.write(f"F1 Score: {f1:.2f}")
+
                     else:
-                        # Validate variable names and perform data splitting
-                        if x_variable in data.columns and y_variable in data.columns:
-                            X = data[[x_variable]]
-                            y = data[y_variable]
-
-                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                            model.fit(X_train, y_train)
-                            y_pred = model.predict(X_test)
-
-                            # Calculate evaluation metrics
-                            accuracy = accuracy_score(y_test, y_pred)
-                            f1 = f1_score(y_test, y_pred, average="weighted")
-
-                            st.write(f"Selected Classification Model: {selected_model}")
-                            st.write(f"Accuracy: {accuracy:.2f}")
-                            st.write(f"F1 Score: {f1:.2f}")
-
-                        else:
-                            st.error("Invalid variable names. Please ensure both X and Y variable names exist in the dataset.")
+                        st.error("X and Y variable names cannot be the same.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
 
@@ -470,33 +469,32 @@ elif page == "Model Evaluation":
                     model = SVR()
 
                 if model is not None:
-                    # Get X and Y variable names from the user
-                    x_variable = st.text_input("Enter the X variable name:")
-                    y_variable = st.text_input("Enter the Y variable name:")
+                    # Get X and Y variable names from the user using select boxes
+                    x_variable = st.selectbox("Select the X variable", data.columns)
+                    y_variable = st.selectbox("Select the Y variable", data.columns)
 
-                    if x_variable == "" or y_variable == "":
-                        st.error("Please enter both X and Y variable names.")
+                    # Validate variable names and perform data splitting
+                    if x_variable != y_variable:
+                        X = data[[x_variable]]
+                        y = data[y_variable]
+
+                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                        model.fit(X_train, y_train)
+                        y_pred = model.predict(X_test)
+
+                        # Calculate evaluation metrics
+                        mae = mean_absolute_error(y_test, y_pred)
+                        r2 = r2_score(y_test, y_pred)
+
+                        st.write(f"Selected Regression Model: {selected_model}")
+                        st.write(f"X Variable: {x_variable}")
+                        st.write(f"Y Variable: {y_variable}")
+                        st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
+                        st.write(f"R-squared (R^2): {r2:.2f}")
+
                     else:
-                        # Validate variable names and perform data splitting
-                        if x_variable in data.columns and y_variable in data.columns:
-                            X = data[[x_variable]]
-                            y = data[y_variable]
-
-                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                            model.fit(X_train, y_train)
-                            y_pred = model.predict(X_test)
-
-                            # Calculate evaluation metrics
-                            mae = mean_absolute_error(y_test, y_pred)
-                            r2 = r2_score(y_test, y_pred)
-
-                            st.write(f"Selected Regression Model: {selected_model}")
-                            st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
-                            st.write(f"R-squared (R^2): {r2:.2f}")
-
-                        else:
-                            st.error("Invalid variable names. Please ensure both X and Y variable names exist in the dataset.")
+                        st.error("X and Y variable names cannot be the same.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
     else:
