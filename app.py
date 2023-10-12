@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
 # Define a function to load your dataset
-@st.cache
+@st.cache_data
 def load_data(uploaded_file):
     data = pd.read_csv(uploaded_file)
     return data
