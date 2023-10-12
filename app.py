@@ -318,46 +318,53 @@ elif page == "Model Evaluation":
             st.write("Dataset Shape:")
             st.write(data.shape)
 
-            # Select Model
-            models = {
-                "Random Forest Classifier": RandomForestClassifier(),
-                "Random Forest Regressor": RandomForestRegressor(),
-                "Linear Regression": LinearRegression(),
-            }
+            # Select X and Y Variables
+            st.subheader("Select X and Y Variables")
+            X_columns = st.multiselect("Select Features (X)", data.columns)
+            y_column = st.selectbox("Select Target Variable (Y)", data.columns)
 
-            model_name = st.selectbox("Select Model", list(models.keys()))
-
-            model = models[model_name]
-
-            if problem_type == "Classification":
-                X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
-                y = data["target_column"]  # Replace "target_column" with the actual target column name
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
-
-                st.subheader("Classification Report")
-                st.text(classification_report(y_test, y_pred))
-
-                st.subheader("Accuracy Score")
-                accuracy = accuracy_score(y_test, y_pred)
-                st.text(accuracy)
+            if not X_columns or not y_column:
+                st.warning("Please select at least one X variable and one Y variable.")
             else:
-                X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
-                y = data["target_column"]  # Replace "target_column" with the actual target column name
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                X = data[X_columns]
+                y = data[y_column]
 
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
+                # Select Model
+                models = {
+                    "Random Forest Classifier": RandomForestClassifier(),
+                    "Random Forest Regressor": RandomForestRegressor(),
+                    "Linear Regression": LinearRegression(),
+                }
 
-                st.subheader("Mean Squared Error")
-                mse = mean_squared_error(y_test, y_pred)
-                st.text(mse)
+                model_name = st.selectbox("Select Model", list(models.keys())
 
-                st.subheader("R-squared (R2) Score")
-                r2 = r2_score(y_test, y_pred)
-                st.text(r2)
+                model = models[model_name]
+
+                if problem_type == "Classification":
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                    model.fit(X_train, y_train)
+                    y_pred = model.predict(X_test)
+
+                    st.subheader("Classification Report")
+                    st.text(classification_report(y_test, y_pred))
+
+                    st.subheader("Accuracy Score")
+                    accuracy = accuracy_score(y_test, y_pred)
+                    st.text(accuracy)
+                else:
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                    model.fit(X_train, y_train)
+                    y_pred = model.predict(X_test)
+
+                    st.subheader("Mean Squared Error")
+                    mse = mean_squared_error(y_test, y_pred)
+                    st.text(mse)
+
+                    st.subheader("R-squared (R2) Score")
+                    r2 = r2_score(y_test, y_pred)
+                    st.text(r2)
         else:
             st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
             
