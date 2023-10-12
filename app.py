@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegress
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report
+from sklearn.svm import SVC, SVR
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -306,7 +307,7 @@ elif page == "Model Evaluation":
     max_rows_for_evaluation = 5000
     max_columns_for_evaluation = 50
 
-    if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
+    if data.shape[0] > max_rows_for evaluation or data.shape[1] > max_columns_for_evaluation:
         st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
     else:
         # Select Problem Type
@@ -330,16 +331,18 @@ elif page == "Model Evaluation":
                 y = data[y_column]
 
                 # Select Model
-                model_name = st.selectbox("Select Model", ["Random Forest Classifier", "Random Forest Regressor", "Linear Regression"])
-
-                if model_name == "Random Forest Classifier":
-                    model = RandomForestClassifier()
-                elif model_name == "Random Forest Regressor":
-                    model = RandomForestRegressor()
-                elif model_name == "Linear Regression":
-                    model = LinearRegression()
+                models_classification = ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine"]
+                models_regression = ["Random Forest Regressor", "Linear Regression", "Support Vector Machine"]
 
                 if problem_type == "Classification":
+                    model_name = st.selectbox("Select Model", models_classification)
+                    if model_name == "Random Forest Classifier":
+                        model = RandomForestClassifier()
+                    elif model_name == "Logistic Regression":
+                        model = LogisticRegression()
+                    elif model_name == "Support Vector Machine":
+                        model = SVC()
+
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
                     model.fit(X_train, y_train)
@@ -352,6 +355,14 @@ elif page == "Model Evaluation":
                     accuracy = accuracy_score(y_test, y_pred)
                     st.text(accuracy)
                 else:
+                    model_name = st.selectbox("Select Model", models_regression)
+                    if model_name == "Random Forest Regressor":
+                        model = RandomForestRegressor()
+                    elif model_name == "Linear Regression":
+                        model = LinearRegression()
+                    elif model_name == "Support Vector Machine":
+                        model = SVR()
+
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
                     model.fit(X_train, y_train)
