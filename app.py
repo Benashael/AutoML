@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.metrics import accuracy_score, mean_squared_error, classification_report
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -31,7 +31,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.selectbox("Select a Page", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering"])
+page = st.sidebar.selectbox("Select a Page", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 if page == "Data Cleaning":
     st.title("Data Cleaning App Page")
@@ -298,6 +298,70 @@ elif page == "AutoML for Clustering":
     else:
         st.warning("Please upload a dataset to continue.")
 
+# Model Evaluation Page
+elif page == "Model Evaluation":
+    st.title("Model Evaluation Page")
+
+    # Define the maximum allowed dataset size for model evaluation
+    max_rows_for_evaluation = 5000
+    max_columns_for_evaluation = 50
+
+    if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
+        st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
+    else:
+        # Select Problem Type
+        problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
+
+        if data is not None:
+            st.write("Dataset:")
+            st.write(data)
+            st.write("Dataset Shape:")
+            st.write(data.shape)
+
+            # Select Model
+            models = {
+                "Random Forest Classifier": RandomForestClassifier(),
+                "Random Forest Regressor": RandomForestRegressor(),
+                "Linear Regression": LinearRegression(),
+            }
+
+            model_name = st.selectbox("Select Model", list(models.keys()))
+
+            if st.button("Evaluate Model"):
+                model = models[model_name]
+
+                if problem_type == "Classification":
+                    X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
+                    y = data["target_column"]  # Replace "target_column" with the actual target column name
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                    model.fit(X_train, y_train)
+                    y_pred = model.predict(X_test)
+
+                    st.subheader("Classification Report")
+                    st.text(classification_report(y_test, y_pred))
+
+                    st.subheader("Accuracy Score")
+                    accuracy = accuracy_score(y_test, y_pred)
+                    st.text(accuracy)
+                else:
+                    X = data.drop(columns=["target_column"])  # Replace "target_column" with the actual target column name
+                    y = data["target_column"]  # Replace "target_column" with the actual target column name
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                    model.fit(X_train, y_train)
+                    y_pred = model.predict(X_test)
+
+                    st.subheader("Mean Squared Error")
+                    mse = mean_squared_error(y_test, y_pred)
+                    st.text(mse)
+
+                    st.subheader("R-squared (R2) Score")
+                    r2 = r2_score(y_test, y_pred)
+                    st.text(r2)
+        else:
+            st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
+            
 # Handle errors and optimize performance
 try:
     if data is not None:
