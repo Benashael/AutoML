@@ -441,7 +441,7 @@ elif page == "Model Evaluation":
 
                         # Calculate evaluation metrics
                         accuracy = accuracy_score(y_test, y_pred)
-                        f1 = f1_score(y_test, y_pred, average="weighted")
+                        f1 = f1_score(y_test, y_pred)
 
                         st.write(f"Selected Classification Model: {selected_model}")
                         st.write(f"X Variable: {x_variable}")
