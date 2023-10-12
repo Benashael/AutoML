@@ -35,7 +35,7 @@ st.write("This application allows you to perform various AutoML tasks, including
 page = st.sidebar.radio("**Select a Page**", ["Introduction", "Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 # Introduction Page
-elif page == "Introduction":
+if page == "Introduction":
     st.title("Introduction")
 
     st.header("Welcome to the AutoML Application!")
