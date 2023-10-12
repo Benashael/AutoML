@@ -31,7 +31,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.selectbox("Select a Page", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Regression", "AutoML for Classification", "AutoML for Clustering"])
+page = st.sidebar.selectbox("Select a Page", ["Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering"])
 
 if page == "Data Cleaning":
     st.title("Data Cleaning App Page")
@@ -69,24 +69,38 @@ elif page == "Data Encoding":
     if data is not None:
         st.write("Dataset:")
         st.write(data)
-    
-        st.subheader("Encode Categorical Variables")
-        categorical_cols = data.select_dtypes(include=["object"]).columns
-        
-        if not categorical_cols:
-            st.warning("No categorical columns found in the dataset for encoding.")
+        st.write("Dataset Shape:")
+        st.write(data.shape)
+
+        # Define the maximum allowed dataset size for data encoding
+        max_rows_for_encoding = 10000
+        max_columns_for_encoding = 100
+
+        if data.shape[0] > max_rows_for_encoding or data.shape[1] > max_columns_for_encoding:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for data encoding (max rows: {max_rows_for_encoding}, max columns: {max_columns_for_encoding}).")
         else:
-            col_to_encode = st.selectbox("Select a Categorical Column to Encode", categorical_cols)
-            encoding_option = st.radio("Select Encoding Method", ["Label Encoding", "One-Hot Encoding"])
-            
-            if encoding_option == "Label Encoding":
-                le = LabelEncoder()
-                data[col_to_encode] = le.fit_transform(data[col_to_encode])
+            st.subheader("Encode Categorical Variables")
+            categorical_cols = data.select_dtypes(include=["object"]).columns
+
+            if not categorical_cols.empty:
+                selected_cols = st.multiselect("Select Categorical Columns to Encode", categorical_cols)
+
+                if not selected_cols:
+                    st.warning("Please select one or more categorical columns to encode.")
+                else:
+                    for col in selected_cols:
+                        encoding_option = st.radio(f"Select Encoding Method for '{col}'", ["Label Encoding", "One-Hot Encoding"])
+
+                        if encoding_option == "Label Encoding":
+                            le = LabelEncoder()
+                            data[col] = le.fit_transform(data[col])
+                        else:
+                            data = pd.get_dummies(data, columns=[col], prefix=[col])
+                    
+                    st.write("Data After Encoding Categorical Variables:")
+                    st.write(data)
             else:
-                data = pd.get_dummies(data, columns=[col_to_encode], prefix=[col_to_encode])
-            
-            st.write("Data After Encoding Categorical Variables:")
-            st.write(data)
+                st.warning("No categorical columns found in the dataset for encoding.")
     else:
         st.warning("Please upload a dataset to continue.")
 
