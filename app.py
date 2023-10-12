@@ -101,7 +101,7 @@ elif page == "Data Visualization":
             st.area_chart(data[columns_to_visualize])
     else:
         st.warning("Please upload a dataset to continue.")
-
+        
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
     if data is not None:
@@ -110,11 +110,13 @@ elif page == "ML Model Selection":
     
         st.subheader("Select Problem Type")
         problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
-    
+        
+        target_variable = st.selectbox("Select Target Variable", data.columns)
+
         if problem_type == "Classification":
-            st.write("Example: Recommend Classification Models using Scikit-learn")
-            X = data.drop("target_column", axis=1)
-            y = data["target_column"]
+            st.write(f"Example: Recommend Classification Models using Scikit-learn for '{target_variable}'")
+            X = data.drop(target_variable, axis=1)
+            y = data[target_variable]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             st.write("Classification Models:")
             classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
@@ -125,9 +127,9 @@ elif page == "ML Model Selection":
                 st.write(f"Accuracy Score: {accuracy_score(y_test, y_pred)}")
 
         elif problem_type == "Regression":
-            st.write("Example: Recommend Regression Models using Scikit-learn")
-            X = data.drop("target_column", axis=1)
-            y = data["target_column"]
+            st.write(f"Example: Recommend Regression Models using Scikit-learn for '{target_variable}'")
+            X = data.drop(target_variable, axis=1)
+            y = data[target_variable]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             st.write("Regression Models:")
             regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
