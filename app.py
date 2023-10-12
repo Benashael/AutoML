@@ -232,33 +232,32 @@ elif page == "AutoML for Clustering":
         st.write(data.shape)
 
         st.subheader("AutoML for Clustering")
-        num_clusters = st.slider("Select the number of clusters:", 2, 10)
 
         # Define the maximum allowed dataset size for clustering
-        max_rows_for_clustering = 5000
-        max_columns_for_clustering = 50
+        max_rows_for_clustering = 10000
+        max_columns_for_clustering = 100
 
         if data.shape[0] > max_rows_for_clustering or data.shape[1] > max_columns_for_clustering:
             st.error(f"Dataset size exceeds the maximum allowed for clustering (max rows: {max_rows_for_clustering}, max columns: {max_columns_for_clustering}).")
         else:
-            st.write("Select X and Y Variables:")
-            X_variable = st.selectbox("Select Features (X)", data.columns)
-            Y_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+            num_clusters = st.slider("Select the number of clusters:", 2, 10)
 
-            X = data[X_variable]
-            Y = data[Y_variable]
+            X = data.dropna()
 
-            # Perform one-hot encoding for categorical features
-            categorical_features = X.select_dtypes(include=['object']).columns.tolist()
-            if categorical_features:
-                X_encoded = pd.get_dummies(X, columns=categorical_features)
+            if X.shape[0] < num_clusters:
+                st.error("Not enough data points for the selected number of clusters.")
             else:
-                X_encoded = X
+                # Perform one-hot encoding for categorical features
+                categorical_features = X.select_dtypes(include=['object']).columns.tolist()
+                if categorical_features:
+                    X_encoded = pd.get_dummies(X, columns=categorical_features)
+                else:
+                    X_encoded = X
 
-            kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-            X_encoded['Cluster'] = kmeans.fit_predict(X_encoded)
-            st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
-            st.write(X_encoded)
+                kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+                X_encoded['Cluster'] = kmeans.fit_predict(X_encoded)
+                st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
+                st.write(X_encoded)
     else:
         st.warning("Please upload a dataset to continue.")
 
