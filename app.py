@@ -403,76 +403,104 @@ elif page == "Model Evaluation":
     max_rows_for_evaluation = 5000
     max_columns_for_evaluation = 50
 
-    if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
-        st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
-    else:
-        # Select Problem Type
-        problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
-
-        if data is not None:
-            st.write("Dataset:")
-            st.write(data)
-            st.write("Dataset Shape:")
-            st.write(data.shape)
-
-            # Select X and Y Variables
-            st.subheader("Select X and Y Variables")
-            X_columns = st.multiselect("Select Features (X)", data.columns)
-            y_column = st.selectbox("Select Target Variable (Y)", data.columns)
-
-            if not X_columns or not y_column:
-                st.warning("Please select at least one X variable and one Y variable.")
-            else:
-                X = data[X_columns]
-                y = data[y_column]
-
-                # Select Model
-                models_classification = ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine"]
-                models_regression = ["Random Forest Regressor", "Linear Regression", "Support Vector Machine"]
-
-                if problem_type == "Classification":
-                    model_name = st.selectbox("Select Model", models_classification)
-                    if model_name == "Random Forest Classifier":
-                        model = RandomForestClassifier()
-                    elif model_name == "Logistic Regression":
-                        model = LogisticRegression()
-                    elif model_name == "Support Vector Machine":
-                        model = SVC()
-
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-
-                    st.subheader("Classification Report")
-                    st.text(classification_report(y_test, y_pred))
-
-                    st.subheader("Accuracy Score")
-                    accuracy = accuracy_score(y_test, y_pred)
-                    st.text(accuracy)
-                else:
-                    model_name = st.selectbox("Select Model", models_regression)
-                    if model_name == "Random Forest Regressor":
-                        model = RandomForestRegressor()
-                    elif model_name == "Linear Regression":
-                        model = LinearRegression()
-                    elif model_name == "Support Vector Machine":
-                        model = SVR()
-
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                    model.fit(X_train, y_train)
-                    y_pred = model.predict(X_test)
-
-                    st.subheader("Mean Squared Error")
-                    mse = mean_squared_error(y_test, y_pred)
-                    st.text(mse)
-
-                    st.subheader("R-squared (R2) Score")
-                    r2 = r2_score(y_test, y_pred)
-                    st.text(r2)
+    if data is not None:
+        if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
         else:
-            st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
+            # Select Problem Type
+            problem_type = st.radio("Select Problem Type", ["Classification", "Regression"])
+
+            if problem_type == "Classification":
+                st.subheader("Classification Model Evaluation")
+
+                classification_models = ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine"]
+                selected_model = st.selectbox("Select a Classification Model", classification_models)
+
+                model = None
+                if selected_model == "Random Forest Classifier":
+                    model = RandomForestClassifier()
+                elif selected_model == "Logistic Regression":
+                    model = LogisticRegression()
+                elif selected_model == "Support Vector Machine":
+                    model = SVC()
+
+                if model is not None:
+                    # Get X and Y variable names from the user
+                    x_variable = st.text_input("Enter the X variable name:")
+                    y_variable = st.text_input("Enter the Y variable name:")
+
+                    if x_variable == "" or y_variable == "":
+                        st.error("Please enter both X and Y variable names.")
+                    else:
+                        # Validate variable names and perform data splitting
+                        if x_variable in data.columns and y_variable in data.columns:
+                            X = data[[x_variable]]
+                            y = data[y_variable]
+
+                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                            model.fit(X_train, y_train)
+                            y_pred = model.predict(X_test)
+
+                            # Calculate evaluation metrics
+                            accuracy = accuracy_score(y_test, y_pred)
+                            f1 = f1_score(y_test, y_pred, average="weighted")
+
+                            st.write(f"Selected Classification Model: {selected_model}")
+                            st.write(f"Accuracy: {accuracy:.2f}")
+                            st.write(f"F1 Score: {f1:.2f}")
+
+                        else:
+                            st.error("Invalid variable names. Please ensure both X and Y variable names exist in the dataset.")
+                else:
+                    st.error("An error occurred while selecting the model. Please try again.")
+
+            elif problem_type == "Regression":
+                st.subheader("Regression Model Evaluation")
+
+                regression_models = ["Random Forest Regressor", "Linear Regression", "Support Vector Machine"]
+                selected_model = st.selectbox("Select a Regression Model", regression_models)
+
+                model = None
+                if selected_model == "Random Forest Regressor":
+                    model = RandomForestRegressor()
+                elif selected_model == "Linear Regression":
+                    model = LinearRegression()
+                elif selected_model == "Support Vector Machine":
+                    model = SVR()
+
+                if model is not None:
+                    # Get X and Y variable names from the user
+                    x_variable = st.text_input("Enter the X variable name:")
+                    y_variable = st.text_input("Enter the Y variable name:")
+
+                    if x_variable == "" or y_variable == "":
+                        st.error("Please enter both X and Y variable names.")
+                    else:
+                        # Validate variable names and perform data splitting
+                        if x_variable in data.columns and y_variable in data.columns:
+                            X = data[[x_variable]]
+                            y = data[y_variable]
+
+                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                            model.fit(X_train, y_train)
+                            y_pred = model.predict(X_test)
+
+                            # Calculate evaluation metrics
+                            mae = mean_absolute_error(y_test, y_pred)
+                            r2 = r2_score(y_test, y_pred)
+
+                            st.write(f"Selected Regression Model: {selected_model}")
+                            st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
+                            st.write(f"R-squared (R^2): {r2:.2f}")
+
+                        else:
+                            st.error("Invalid variable names. Please ensure both X and Y variable names exist in the dataset.")
+                else:
+                    st.error("An error occurred while selecting the model. Please try again.")
+    else:
+        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
             
 # Handle errors and optimize performance
 try:
