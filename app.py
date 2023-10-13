@@ -412,8 +412,8 @@ elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
     # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 5000
-    max_columns_for_evaluation = 50
+    max_rows_for_evaluation = 10000
+    max_columns_for_evaluation = 100
 
     if data is not None:
         if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
@@ -441,31 +441,33 @@ elif page == "Model Evaluation":
                     x_variables = st.multiselect("Select the X variables", data.columns)
                     y_variable = st.selectbox("Select the Y variable", data.columns)
 
-                    # Validate variable names and perform data splitting
-                    if len(x_variables) > 0 and y_variable not in x_variables:
-                        X = data[x_variables]
-                        y = data[y_variable]
-
-                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                        model.fit(X_train, y_train)
-                        y_pred = model.predict(X_test)
-
-                        # Calculate evaluation metrics
-                        accuracy = accuracy_score(y_test, y_pred)
-                        f1 = f1_score(y_test, y_pred, average="weighted")
-                        report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
-
-                        st.write(f"Selected Classification Model: {selected_model}")
-                        st.write(f"X Variables: {', '.join(x_variables)}")
-                        st.write(f"Y Variable: {y_variable}")
-                        st.write(f"Accuracy: {accuracy:.2f}")
-                        st.write(f"F1 Score: {f1:.2f}")
-                        st.subheader("Classification Report:")
-                        st.text(report)
-
+                    if y_variable in x_variables:
+                        st.error("Invalid variable names. Y variable must be different from X variables.")
                     else:
-                        st.error("Invalid variable names. Please ensure at least one X variable is selected and Y variable is different.")
+                        # Validate variable names and perform data splitting
+                        if len(x_variables) > 0:
+                            X = data[x_variables]
+                            y = data[y_variable]
+
+                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                            model.fit(X_train, y_train)
+                            y_pred = model.predict(X_test)
+
+                            # Calculate evaluation metrics
+                            accuracy = accuracy_score(y_test, y_pred)
+                            f1 = f1_score(y_test, y_pred, average="weighted")
+                            report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
+
+                            st.write(f"Selected Classification Model: {selected_model}")
+                            st.write(f"X Variables: {', '.join(x_variables)}")
+                            st.write(f"Y Variable: {y_variable}")
+                            st.write(f"Accuracy: {accuracy:.2f}")
+                            st.write(f"F1 Score: {f1:.2f}")
+                            st.subheader("Classification Report:")
+                            st.text(report)
+                        else:
+                            st.error("Invalid variable names. Please ensure at least one X variable is selected.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
 
@@ -488,30 +490,32 @@ elif page == "Model Evaluation":
                     x_variables = st.multiselect("Select the X variables", data.columns)
                     y_variable = st.selectbox("Select the Y variable", data.columns)
 
-                    # Validate variable names and perform data splitting
-                    if len(x_variables) > 0 and y_variable not in x_variables:
-                        X = data[x_variables]
-                        y = data[y_variable]
-
-                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                        model.fit(X_train, y_train)
-                        y_pred = model.predict(X_test)
-
-                        # Calculate evaluation metrics
-                        mae = mean_absolute_error(y_test, y_pred)
-                        r2 = r2_score(y_test, y_pred)
-                        mse = mean_squared_error(y_test, y_pred)
-
-                        st.write(f"Selected Regression Model: {selected_model}")
-                        st.write(f"X Variables: {', '.join(x_variables)}")
-                        st.write(f"Y Variable: {y_variable}")
-                        st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
-                        st.write(f"R-squared (R^2): {r2:.2f}")
-                        st.write(f"Mean Squared Error (MSE): {mse:.2f}")
-
+                    if y_variable in x_variables:
+                        st.error("Invalid variable names. Y variable must be different from X variables.")
                     else:
-                        st.error("Invalid variable names. Please ensure at least one X variable is selected and Y variable is different.")
+                        # Validate variable names and perform data splitting
+                        if len(x_variables) > 0:
+                            X = data[x_variables]
+                            y = data[y_variable]
+
+                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                            model.fit(X_train, y_train)
+                            y_pred = model.predict(X_test)
+
+                            # Calculate evaluation metrics
+                            mae = mean_absolute_error(y_test, y_pred)
+                            r2 = r2_score(y_test, y_pred)
+                            mse = mean_squared_error(y_test, y_pred)
+
+                            st.write(f"Selected Regression Model: {selected_model}")
+                            st.write(f"X Variables: {', '.join(x_variables)}")
+                            st.write(f"Y Variable: {y_variable}")
+                            st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
+                            st.write(f"R-squared (R^2): {r2:.2f}")
+                            st.write(f"Mean Squared Error (MSE): {mse:.2f}")
+                        else:
+                            st.error("Invalid variable names. Please ensure at least one X variable is selected.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
     else:
