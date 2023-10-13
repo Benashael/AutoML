@@ -457,15 +457,15 @@ elif page == "Model Evaluation":
                             # Calculate evaluation metrics
                             accuracy = accuracy_score(y_test, y_pred)
                             f1 = f1_score(y_test, y_pred, average="weighted")
-                            report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
+                            #report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
 
                             st.write(f"Selected Classification Model: {selected_model}")
                             st.write(f"X Variables: {', '.join(x_variables)}")
                             st.write(f"Y Variable: {y_variable}")
                             st.write(f"Accuracy: {accuracy:.2f}")
                             st.write(f"F1 Score: {f1:.2f}")
-                            st.subheader("Classification Report:")
-                            st.text(report)
+                            #st.subheader("Classification Report:")
+                            #st.text(report)
                         else:
                             st.error("Invalid variable names. Please ensure at least one X variable is selected.")
                 else:
