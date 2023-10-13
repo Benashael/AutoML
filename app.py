@@ -118,8 +118,14 @@ elif page == "Data Cleaning":
         st.write("Dataset Shape:")
         st.write(data.shape)
 
+        # Option to Show Summary Statistics
+        show_summary = st.checkbox("Show Summary Statistics")
+        if show_summary:
+            st.subheader("Summary Statistics")
+            st.write(data.describe())
+
         # Check if the dataset has too many rows or columns
-        max_rows_for_cleaning = 3500
+        max_rows_for_cleaning = 5000
         max_columns_for_cleaning = 50
 
         if data.shape[0] > max_rows_for_cleaning or data.shape[1] > max_columns_for_cleaning:
@@ -153,11 +159,17 @@ elif page == "Data Cleaning":
                 st.write(f"Filled missing values with custom value: {custom_value}")
                 st.write(data_cleaned)
 
-            elif method == "Mean" and categorical_features:
-                st.warning("Mean method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
-
-            elif method == "Median" and categorical_features:
-                st.warning("Median method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
+            elif (method == "Mean" or method == "Median") and not categorical_features:
+                if method == "Mean":
+                    data_cleaned = data.fillna(data.mean())
+                    st.write("Filled missing values with mean.")
+                    st.write(data_cleaned)
+                else:  # method == "Median"
+                    data_cleaned = data.fillna(data.median())
+                    st.write("Filled missing values with median.")
+                    st.write(data_cleaned)
+            else:
+                st.warning(f"{method} method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
@@ -170,8 +182,8 @@ elif page == "Data Encoding":
         st.write(data.shape)
 
         # Define the maximum allowed dataset size for data encoding
-        max_rows_for_encoding = 10000
-        max_columns_for_encoding = 100
+        max_rows_for_encoding = 5000
+        max_columns_for_encoding = 50
 
         if data.shape[0] > max_rows_for_encoding or data.shape[1] > max_columns_for_encoding:
             st.warning(f"Note: The dataset size exceeds the maximum allowed for data encoding (max rows: {max_rows_for_encoding}, max columns: {max_columns_for_encoding}).")
@@ -400,8 +412,8 @@ elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
     # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 10000
-    max_columns_for_evaluation = 100
+    max_rows_for_evaluation = 5000
+    max_columns_for_evaluation = 50
 
     if data is not None:
         if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
@@ -426,12 +438,12 @@ elif page == "Model Evaluation":
 
                 if model is not None:
                     # Get X and Y variable names from the user using select boxes
-                    x_variable = st.selectbox("Select the X variable", data.columns)
+                    x_variables = st.multiselect("Select the X variables", data.columns)
                     y_variable = st.selectbox("Select the Y variable", data.columns)
 
                     # Validate variable names and perform data splitting
-                    if x_variable != y_variable:
-                        X = data[[x_variable]]
+                    if len(x_variables) > 0 and y_variable not in x_variables:
+                        X = data[x_variables]
                         y = data[y_variable]
 
                         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -442,15 +454,18 @@ elif page == "Model Evaluation":
                         # Calculate evaluation metrics
                         accuracy = accuracy_score(y_test, y_pred)
                         f1 = f1_score(y_test, y_pred, average="weighted")
+                        report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
 
                         st.write(f"Selected Classification Model: {selected_model}")
-                        st.write(f"X Variable: {x_variable}")
+                        st.write(f"X Variables: {', '.join(x_variables)}")
                         st.write(f"Y Variable: {y_variable}")
                         st.write(f"Accuracy: {accuracy:.2f}")
                         st.write(f"F1 Score: {f1:.2f}")
+                        st.subheader("Classification Report:")
+                        st.text(report)
 
                     else:
-                        st.error("X and Y variable names cannot be the same.")
+                        st.error("Invalid variable names. Please ensure at least one X variable is selected and Y variable is different.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
 
@@ -470,12 +485,12 @@ elif page == "Model Evaluation":
 
                 if model is not None:
                     # Get X and Y variable names from the user using select boxes
-                    x_variable = st.selectbox("Select the X variable", data.columns)
+                    x_variables = st.multiselect("Select the X variables", data.columns)
                     y_variable = st.selectbox("Select the Y variable", data.columns)
 
                     # Validate variable names and perform data splitting
-                    if x_variable != y_variable:
-                        X = data[[x_variable]]
+                    if len(x_variables) > 0 and y_variable not in x_variables:
+                        X = data[x_variables]
                         y = data[y_variable]
 
                         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -486,15 +501,17 @@ elif page == "Model Evaluation":
                         # Calculate evaluation metrics
                         mae = mean_absolute_error(y_test, y_pred)
                         r2 = r2_score(y_test, y_pred)
+                        mse = mean_squared_error(y_test, y_pred)
 
                         st.write(f"Selected Regression Model: {selected_model}")
-                        st.write(f"X Variable: {x_variable}")
+                        st.write(f"X Variables: {', '.join(x_variables)}")
                         st.write(f"Y Variable: {y_variable}")
                         st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
                         st.write(f"R-squared (R^2): {r2:.2f}")
+                        st.write(f"Mean Squared Error (MSE): {mse:.2f}")
 
                     else:
-                        st.error("X and Y variable names cannot be the same.")
+                        st.error("Invalid variable names. Please ensure at least one X variable is selected and Y variable is different.")
                 else:
                     st.error("An error occurred while selecting the model. Please try again.")
     else:
