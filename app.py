@@ -74,6 +74,11 @@ if page == "Home Page":
         "The **Data Visualization Page** lets you visualize the dataset using various techniques such as histograms, scatter plots, and heat maps. Select a dataset and explore its visual representations."
     )
 
+    st.subheader("Feature Selection Page")
+    st.markdown(
+        "The **Feature Selection Page** allows you to choose and analyze the most important features in your dataset for machine learning. Feature selection is a critical step to improve model performance and reduce the complexity of your model."
+    )
+    
     st.subheader("ML Model Selection Page")
     st.markdown(
         "The **ML Model Selection Page** helps you choose the right machine learning model based on the problem type (classification, regression, or time series). Pick a dataset and select the target variable to find the best machine learning model."
