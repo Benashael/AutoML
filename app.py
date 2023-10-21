@@ -22,17 +22,24 @@ def load_data(uploaded_file):
 
 # Upload a dataset
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+# Initialize data as None
+data = None
+
+# Check if a file was uploaded and if it's valid
 if uploaded_file is not None:
-    data = load_data(uploaded_file)
-else:
-    data = None
+    try:
+        data = pd.read_csv(uploaded_file)
+    except (ValueError, pd.errors.ParserError):
+        st.error("The uploaded dataset is not in a valid format or language. Please upload a valid dataset in CSV format.")
+        data = None  # Set data to None if it's not valid
 
 # App description
 st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 # Introduction Page
 if page == "Home Page":
@@ -44,6 +51,11 @@ if page == "Home Page":
     st.subheader("Home Page")
     st.markdown(
         "The **Home Page** is the starting point of the application. You can navigate to different sections of the app using the sidebar navigation."
+    )
+
+    st.subheader("Data Profiling Page")
+    st.markdown(
+        "The **Data Profiling Page** allows you to gain a detailed understanding of your dataset. Explore dataset shape, column names, data types, summary statistics, categorical features, missing values, correlation matrix, and data head."
     )
 
     st.subheader("Data Cleaning Page")
@@ -66,16 +78,21 @@ if page == "Home Page":
         "The **ML Model Selection Page** helps you choose the right machine learning model based on the problem type (classification, regression, or time series). Pick a dataset and select the target variable to find the best machine learning model."
     )
 
-    st.subheader("AutoML for Regression Page")
-    st.markdown(
-        "The **AutoML for Regression Page** enables you to perform automated machine learning (AutoML) for regression problems using the `lazyRegression` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
-    )
-
     st.subheader("AutoML for Classification Page")
     st.markdown(
         "The **AutoML for Classification Page** allows you to perform automated machine learning (AutoML) for classification problems using the `lazyClassifier` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
     )
 
+    st.subheader("AutoML for Regression Page")
+    st.markdown(
+        "The **AutoML for Regression Page** enables you to perform automated machine learning (AutoML) for regression problems using the `lazyRegression` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
+    )
+
+    st.subheader("AutoML for Clustering Page")
+    st.markdown(
+        "The **AutoML for Clustering Page** empowers you to perform automated machine learning (AutoML) for clustering problems. Clustering is a technique used to group similar data points together. In this page, you can select a dataset and choose the number of clusters. Note: This task is suitable for small datasets."
+    )
+    
     st.subheader("Model Evaluation Page")
     st.markdown(
         "The **Model Evaluation Page** is where you can evaluate machine learning models on your dataset. Choose the problem type (classification or regression), select X and Y variables, and pick a model to see evaluation results."
@@ -106,6 +123,66 @@ if page == "Home Page":
     st.markdown(
         "Enjoy using the AutoML Application and have a productive data analysis and model selection experience!"
     )
+
+# Data Profiling Page
+elif page == "Data Profiling":
+    st.title("Data Profiling Page")
+
+    if data is not None and not data.empty:
+        st.write("Dataset Overview")
+
+        # Dataset Shape
+        st.write("Dataset Shape:", data.shape)
+
+        # Column Names
+        st.subheader("Column Names:")
+        st.write(data.columns)
+
+        # Data Types
+        st.subheader("Data Types:")
+        st.write(data.dtypes)
+
+        # Summary Statistics
+        st.subheader("Summary Statistics:")
+        st.write(data.describe())
+
+        # Categorical Features
+        categorical_features = data.select_dtypes(include=['object']).columns.tolist()
+        if categorical_features:
+            st.subheader("Categorical Features:")
+            st.write("Number of Categorical Features:", len(categorical_features))
+            st.write("Categorical Feature Names:")
+            st.write(categorical_features)
+        else:
+            st.subheader("Categorical Features:")
+            st.write("No Categorical Features in the dataset.")
+
+        # Missing Values
+        missing_values = data.isnull().sum()
+        if missing_values.sum() > 0:
+            st.subheader("Missing Values:")
+            st.write("Total Missing Values:", missing_values.sum())
+            st.write("Missing Values by Column:")
+            st.write(missing_values[missing_values > 0])
+        else:
+            st.subheader("Missing Values:")
+            st.write("No missing values in the dataset.")
+
+        # Correlation Matrix
+        st.subheader("Correlation Matrix:")
+        correlation_matrix = data.corr()
+        st.write(correlation_matrix)
+
+        # Data Head
+        st.subheader("Data Head:")
+        st.write(data.head())
+
+        # Data Tail
+        st.subheader("Data Tail:")
+        st.write(data.tail()) 
+
+    else:
+        st.error("Please upload a valid dataset in the 'Data Profiling' step to continue.")
 
 # Data Cleaning Page
 elif page == "Data Cleaning":
