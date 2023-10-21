@@ -271,6 +271,7 @@ elif page == "Data Cleaning":
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
+# Data Encoding Page
 elif page == "Data Encoding":
     st.title("Data Encoding App Page")
     if data is not None:
@@ -306,6 +307,17 @@ elif page == "Data Encoding":
                     
                     st.write("Data After Encoding Categorical Variables:")
                     st.write(data)
+
+                    # Allow users to download the encoded dataset
+                    if st.button("Download Encoded Dataset"):
+                        encoded_csv = data.to_csv(index=False)
+                        encoded_csv = encoded_csv.encode()
+                        st.download_button(
+                            label="Click here to download encoded dataset as CSV",
+                            data=encoded_csv,
+                            key="encoded_data.csv",
+                            file_name="encoded_data.csv"
+                        )
             else:
                 st.warning("No categorical columns found in the dataset for encoding.")
     else:
