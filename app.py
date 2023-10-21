@@ -168,10 +168,14 @@ elif page == "Data Profiling":
             st.subheader("Missing Values:")
             st.write("No missing values in the dataset.")
 
-        # Correlation Matrix
-        st.subheader("Correlation Matrix:")
-        correlation_matrix = data.corr()
-        st.write(correlation_matrix)
+        # Correlation Matrix (only if there are no categorical features)
+        if not categorical_features:
+            st.subheader("Correlation Matrix:")
+            correlation_matrix = data.corr()
+            st.write(correlation_matrix)
+        else:
+            st.subheader("Correlation Matrix:")
+            st.write("Cannot calculate correlation matrix because categorical features are present.")
 
         # Data Head
         st.subheader("Data Head:")
