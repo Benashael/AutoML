@@ -11,6 +11,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report,  f1_score, mean_absolute_error, r2_score
 from sklearn.svm import SVC, SVR
+from sklearn.feature_selection import SelectKBest, f_regression
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -310,6 +311,77 @@ elif page == "Data Visualization":
     else:
         st.warning("Please upload a dataset to continue.")
         
+# Feature Selection Page
+elif page == "Feature Selection":
+    st.title("Feature Selection Page")
+
+    if data is not None and not data.empty:
+        st.write("Dataset Overview")
+
+        # Dataset Shape
+        st.write("Dataset Shape:", data.shape)
+
+        # Check for categorical features
+        categorical_features = data.select_dtypes(include=['object']).columns.tolist()
+
+        if not categorical_features:
+            # List of available features
+            features = data.columns
+
+            # Select Features for Analysis
+            selected_features = st.multiselect("Select Features for Analysis", features)
+
+            if len(selected_features) > 0:
+                # Display selected features
+                st.subheader("Selected Features:")
+                st.write(selected_features)
+
+                # Target Variable Selection
+                target_variable = st.selectbox("Select the Target Variable", features)
+
+                # Split data into X and y
+                X = data[selected_features]
+                y = data[target_variable]
+
+                # Feature Ranking
+                selector = SelectKBest(score_func=f_regression, k="all")
+                X_new = selector.fit_transform(X, y)
+
+                # Get feature scores and rankings
+                feature_scores = selector.scores_
+                feature_rankings = (-feature_scores).argsort().argsort()  # Rank features
+
+                # Display feature scores and rankings
+                feature_info = pd.DataFrame({
+                    "Feature": selected_features,
+                    "Score": feature_scores,
+                    "Ranking": feature_rankings
+                })
+                st.subheader("Feature Scores and Rankings")
+                st.write(feature_info.sort_values(by="Ranking"))
+
+                # Perform a simple regression using the top-ranked feature
+                top_feature = feature_info[feature_info["Ranking"] == 0]["Feature"].iloc[0]
+                X_top_feature = X[top_feature].values.reshape(-1, 1)
+                X_train, X_test, y_train, y_test = train_test_split(X_top_feature, y, test_size=0.2, random_state=42)
+                model = LinearRegression()
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+
+                # Calculate Mean Squared Error as a metric
+                mse = mean_squared_error(y_test, y_pred)
+
+                st.subheader("Regression using Top-Ranked Feature")
+                st.write(f"Top-Ranked Feature: {top_feature}")
+                st.write(f"Mean Squared Error (MSE): {mse:.2f}")
+
+            else:
+                st.warning("Please select at least one feature for analysis.")
+        else:
+            st.error("The dataset contains categorical features and is not suitable for feature selection.")
+    else:
+        st.error("Please upload a valid dataset in the 'Feature Selection' step to continue.")
+
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
     if data is not None:
