@@ -40,7 +40,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Cleaning", "Data Encoding", "Data Visualization", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Cleaning", "Data Encoding", "Data Visualization", "Feature Selection", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 # Introduction Page
 if page == "Home Page":
