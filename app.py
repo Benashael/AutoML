@@ -230,7 +230,7 @@ elif page == "Data Cleaning":
             # Choose missing value handling method
             st.subheader("Missing Value Handling")
             methods = ["Drop Missing Values", "Custom Value"]
-            if categorical_features:
+            if not categorical_features:
                 methods.extend(["Mean", "Median"])
 
             method = st.selectbox("Select a method:", methods)
@@ -257,6 +257,17 @@ elif page == "Data Cleaning":
                     st.write(data_cleaned)
             else:
                 st.warning(f"{method} method not available due to the presence of categorical features. Use 'Drop Missing Values' or 'Custom Value' instead.")
+
+        # Allow users to download the cleaned dataset
+        if st.button("Download Cleaned Dataset"):
+            cleaned_csv = data_cleaned.to_csv(index=False)
+            cleaned_csv = cleaned_csv.encode()
+            st.download_button(
+                label="Click here to download cleaned dataset as CSV",
+                data=cleaned_csv,
+                key="cleaned_data.csv",
+                file_name="cleaned_data.csv"
+            )
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
