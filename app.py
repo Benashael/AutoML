@@ -431,7 +431,7 @@ elif page == "Hyperparameter Tuning":
             selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest", "Logistic Regression", "Support Vector Machine"])
             # Add more machine learning models as needed
 
-		    if selected_model == "Random Forest Classifier":
+	    if selected_model == "Random Forest Classifier":
                 model = RandomForestClassifier()
             elif selected_model == "Logistic Regression":
                 model = LogisticRegression()
