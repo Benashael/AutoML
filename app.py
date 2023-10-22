@@ -9,10 +9,11 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, mean_squared_error, classification_report,  f1_score, mean_absolute_error, r2_score
+from sklearn.metrics import accuracy_score, mean_squared_error, classification_report, f1_score, mean_absolute_error, r2_score
 from sklearn.svm import SVC, SVR
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.model_selection import GridSearchCV
+import base64
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
