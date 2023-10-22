@@ -465,30 +465,47 @@ elif page == "Hyperparameter Tuning":
                 st.write(hyperparameters)
 
                 try:
-                    # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
-                    
-                    param_grid = {
-                        "n_estimators": [hyperparameters["n_estimators"]],
-                        "max_depth": [hyperparameters["max_depth"]],
-                        "min_samples_split": [hyperparameters["min_samples_split"]]
-                    }
+                    # Prompt the user to select target variable and other variables
+                    st.subheader("Select Target Variable and Other Variables")
 
-                    grid_search = GridSearchCV(model, param_grid, cv=5)
-                    grid_search.fit(X_train, y_train)
+                    target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
+                    other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != target_variable])
 
-                    best_hyperparameters = grid_search.best_params_
+                    if other_variables and target_variable:
+                        X_train = data[other_variables]
+                        y_train = data[target_variable]
 
-                    # Display the best hyperparameters and their performance
-                    st.subheader("Best Hyperparameters")
-                    st.write(best_hyperparameters)
+                        # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
+                        from sklearn.model_selection import GridSearchCV
 
-                    # Display the model's performance with the best hyperparameters
-                    st.subheader("Model Performance with Best Hyperparameters")
-                    best_model = grid_search.best_estimator_
-                    y_pred = best_model.predict(X_test)
-                    accuracy = accuracy_score(y_test, y_pred)
-                    st.write(f"Accuracy with Best Hyperparameters: {accuracy:.2f}")
+                        param_grid = {
+                            "n_estimators": [hyperparameters["n_estimators"]],
+                            "max_depth": [hyperparameters["max_depth"]],
+                            "min_samples_split": [hyperparameters["min_samples_split"]]
+                        }
 
+                        grid_search = GridSearchCV(model, param_grid, cv=5)
+                        grid_search.fit(X_train, y_train)
+
+                        best_hyperparameters = grid_search.best_params_
+
+                        # Display the best hyperparameters and their performance
+                        st.subheader("Best Hyperparameters")
+                        st.write(best_hyperparameters)
+
+                        # Display the model's performance with the best hyperparameters
+                        st.subheader("Model Performance with Best Hyperparameters")
+                        best_model = grid_search.best_estimator_
+
+                        # Split the data for evaluation
+                        X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+                        best_model.fit(X_train, y_train)
+                        y_pred = best_model.predict(X_test)
+                        accuracy = accuracy_score(y_test, y_pred)
+                        st.write(f"Accuracy with Best Hyperparameters: {accuracy:.2f}")
+
+                    else:
+                        st.error("Please select a valid target variable and at least one other variable.")
                 except Exception as e:
                     st.error(f"An error occurred during hyperparameter tuning: {str(e)}")
             else:
