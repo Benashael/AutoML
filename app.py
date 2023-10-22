@@ -432,21 +432,21 @@ elif page == "Hyperparameter Tuning":
             # Add more machine learning models as needed
 
 	    if selected_model == "Random Forest Classifier":
-                model = RandomForestClassifier()
-            elif selected_model == "Logistic Regression":
-                model = LogisticRegression()
-            elif selected_model == "Decision Tree Classifier":
-                model = DecisionTreeClassifier()
-            elif selected_model == "Random Forest Regressor":
-                model = RandomForestRegressor()
-            elif selected_model == "Linear Regression":
-                model = LinearRegression()
-            elif selected_model == "Ridge Regression":
-                model = Ridge()
-            elif selected_model == "Lasso Classifier":
-                model = Lasso()
-            elif selected_model == "Support Vector Machine":
-                model = SVC()
+		model = RandomForestClassifier()
+	    elif selected_model == "Logistic Regression":
+		model = LogisticRegression()
+	    elif selected_model == "Decision Tree Classifier":
+		model = DecisionTreeClassifier()
+	    elif selected_model == "Random Forest Regressor":
+		model = RandomForestRegressor()
+	    elif selected_model == "Linear Regression":
+		model = LinearRegression()
+	    elif selected_model == "Ridge Regression":
+		model = Ridge()
+	    elif selected_model == "Lasso Classifier":
+		model = Lasso()
+	    elif selected_model == "Support Vector Machine":
+		model = SVC()
             
             if model is not None:
                 st.subheader("Hyperparameter Tuning")
