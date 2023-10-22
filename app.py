@@ -422,7 +422,7 @@ elif page == "Hyperparameter Tuning":
     st.title("Hyperparameter Tuning Page")
 
     # Check if the dataset and model are available
-    if data is not None and not data.empty:
+    if data is not None and not data empty:
         st.write("Dataset:")
         st.write(data)
         st.write("Dataset Shape:")
@@ -439,32 +439,59 @@ elif page == "Hyperparameter Tuning":
 
             if selected_model == "Random Forest Classifier":
                 model = RandomForestClassifier()
-            elif selected_model == "Logistic Regression":
-                model = LogisticRegression()
-            elif selected_model == "Support Vector Machine":
-                model = SVC()
-            elif selected_model == "Decision Tree Classifier":
-                model = DecisionTreeClassifier()
-            elif selected_model == "Random Forest Regressor":
-                model = RandomForestRegressor()
-            elif selected_model == "Linear Regression":
-                model = LinearRegression()
-            elif selected_model == "Ridge Regression":
-                model = Ridge()
-            elif selected_model == "Lasso Classifier":
-                model = Lasso()
-            # Add more models as needed
-
-            if model is not None:
-                st.subheader("Hyperparameter Tuning")
-
-                # Define hyperparameters to tune
                 hyperparameters = {
                     "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
                     "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
                     "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                    "min_samples_leaf": st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10),
                 }
-                # Add more hyperparameters as needed
+            elif selected_model == "Logistic Regression":
+                model = LogisticRegression()
+                hyperparameters = {
+                    "C": st.slider("Regularization Parameter (C)", 0.01, 10.0),
+                    "max_iter": st.slider("Maximum Iterations (max_iter)", 100, 10000, step=100),
+                }
+            elif selected_model == "Support Vector Machine":
+                model = SVC()
+                hyperparameters = {
+                    "C": st.slider("Regularization Parameter (C)", 0.01, 10.0),
+                    "kernel": st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid"]),
+                }
+            elif selected_model == "Decision Tree Classifier":
+                model = DecisionTreeClassifier()
+                hyperparameters = {
+                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                }
+            elif selected_model == "Random Forest Regressor":
+                model = RandomForestRegressor()
+                hyperparameters = {
+                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
+                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                    "min_samples_leaf": st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10),
+                }
+            elif selected_model == "Linear Regression":
+                model = LinearRegression()
+                hyperparameters = {
+                    "fit_intercept": st.checkbox("Fit Intercept"),
+                }
+            elif selected_model == "Ridge Regression":
+                model = Ridge()
+                hyperparameters = {
+                    "alpha": st.slider("Regularization Strength (alpha)", 0.01, 10.0),
+                    "fit_intercept": st.checkbox("Fit Intercept"),
+                }
+            elif selected_model == "Lasso Classifier":
+                model = Lasso()
+                hyperparameters = {
+                    "alpha": st.slider("Regularization Strength (alpha)", 0.01, 10.0),
+                    "fit_intercept": st.checkbox("Fit Intercept"),
+                }
+            # Add more models and their hyperparameters as needed
+
+            if model is not None:
+                st.subheader("Hyperparameter Tuning")
 
                 # Display the selected hyperparameters
                 st.write("Selected Hyperparameters:")
@@ -477,17 +504,14 @@ elif page == "Hyperparameter Tuning":
                     target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
                     other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != target_variable])
 
-                    if other_variables and target_variable:
+                    if other variables and target_variable:
                         X_train = data[other_variables]
                         y_train = data[target_variable]
 
                         # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
-                        
-                        param_grid = {
-                            "n_estimators": [hyperparameters["n_estimators"]],
-                            "max_depth": [hyperparameters["max_depth"]],
-                            "min_samples_split": [hyperparameters["min_samples_split"]]
-                        }
+                        from sklearn.model_selection import GridSearchCV
+
+                        param_grid = hyperparameters
 
                         grid_search = GridSearchCV(model, param_grid, cv=5)
                         grid_search.fit(X_train, y_train)
