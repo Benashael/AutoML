@@ -12,6 +12,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, mean_squared_error, classification_report,  f1_score, mean_absolute_error, r2_score
 from sklearn.svm import SVC, SVR
 from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.model_selection import GridSearchCV
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -40,7 +41,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Cleaning", "Data Encoding", "Data Visualization", "Feature Selection", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Cleaning", "Data Encoding", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 # Introduction Page
 if page == "Home Page":
@@ -409,6 +410,90 @@ elif page == "Feature Selection":
             st.error("The dataset contains categorical features and is not suitable for feature selection.")
     else:
         st.error("Please upload a valid dataset in the 'Feature Selection' step to continue.")
+
+# Hyperparameter Tuning Page
+elif page == "Hyperparameter Tuning":
+    st.title("Hyperparameter Tuning Page")
+
+    # Check if the dataset and model are available
+    if data is not None and not data.empty:
+        st.write("Dataset:")
+        st.write(data)
+        st.write("Dataset Shape:")
+        st.write(data.shape)
+
+        # Check if the selected dataset has categorical features
+        categorical_cols = data.select_dtypes(include=["object"]).columns
+        if not categorical_cols.empty:
+            st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
+        else:
+            st.write("Machine Learning Model:")
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest", "Logistic Regression", "Support Vector Machine"])
+            # Add more machine learning models as needed
+
+		    if selected_model == "Random Forest Classifier":
+                model = RandomForestClassifier()
+            elif selected_model == "Logistic Regression":
+                model = LogisticRegression()
+            elif selected_model == "Decision Tree Classifier":
+                model = DecisionTreeClassifier()
+            elif selected_model == "Random Forest Regressor":
+                model = RandomForestRegressor()
+            elif selected_model == "Linear Regression":
+                model = LinearRegression()
+            elif selected_model == "Ridge Regression":
+                model = Ridge()
+            elif selected_model == "Lasso Classifier":
+                model = Lasso()
+            elif selected_model == "Support Vector Machine":
+                model = SVC()
+            
+            if model is not None:
+                st.subheader("Hyperparameter Tuning")
+
+                # Define hyperparameters to tune
+                hyperparameters = {
+                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
+                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                }
+                # Add more hyperparameters as needed
+
+                # Display the selected hyperparameters
+                st.write("Selected Hyperparameters:")
+                st.write(hyperparameters)
+
+                try:
+                    # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
+                     
+                    param_grid = {
+                        "n_estimators": [hyperparameters["n_estimators"]],
+                        "max_depth": [hyperparameters["max_depth"]],
+                        "min_samples_split": [hyperparameters["min_samples_split"]]
+                    }
+
+                    grid_search = GridSearchCV(model, param_grid, cv=5)
+                    grid_search.fit(X_train, y_train)
+
+                    best_hyperparameters = grid_search.best_params_
+
+                    # Display the best hyperparameters and their performance
+                    st.subheader("Best Hyperparameters")
+                    st.write(best_hyperparameters)
+
+                    # Display the model's performance with the best hyperparameters
+                    st.subheader("Model Performance with Best Hyperparameters")
+                    best_model = grid_search.best_estimator_
+                    y_pred = best_model.predict(X_test)
+                    accuracy = accuracy_score(y_test, y_pred)
+                    st.write(f"Accuracy with Best Hyperparameters: {accuracy:.2f}")
+
+                except Exception as e:
+                    st.error(f"An error occurred during hyperparameter tuning: {str(e)}")
+            else:
+                st.error("An error occurred while selecting the model. Please try again.")
+    else:
+        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
