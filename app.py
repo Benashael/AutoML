@@ -82,7 +82,7 @@ if page == "Home Page":
     
     st.subheader("Hyperparameter Tuning Page")
     st.markdown(
-        "**Hyperparameter Tuning Page** allows you to fine-tune machine learning models with user-selected hyperparameters for optimal performance."
+        "The **Hyperparameter Tuning Page** allows you to fine-tune machine learning models with user-selected hyperparameters for optimal performance."
     )
 
     st.subheader("ML Model Selection Page")
