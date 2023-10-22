@@ -80,6 +80,11 @@ if page == "Home Page":
         "The **Feature Selection Page** allows you to choose and analyze the most important features in your dataset for machine learning. Feature selection is a critical step to improve model performance and reduce the complexity of your model."
     )
     
+    st.subheader("Hyperparameter Tuning Page")
+    st.markdown(
+        "**Hyperparameter Tuning Page** allows you to fine-tune machine learning models with user-selected hyperparameters for optimal performance."
+    )
+
     st.subheader("ML Model Selection Page")
     st.markdown(
         "The **ML Model Selection Page** helps you choose the right machine learning model based on the problem type (classification, regression, or time series). Pick a dataset and select the target variable to find the best machine learning model."
@@ -476,8 +481,7 @@ elif page == "Hyperparameter Tuning":
                         y_train = data[target_variable]
 
                         # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
-                        from sklearn.model_selection import GridSearchCV
-
+                        
                         param_grid = {
                             "n_estimators": [hyperparameters["n_estimators"]],
                             "max_depth": [hyperparameters["max_depth"]],
