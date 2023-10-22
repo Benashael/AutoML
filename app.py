@@ -657,15 +657,16 @@ elif page == "AutoML for Regression":
     else:
         st.warning("Please upload a dataset to continue.")
         
+# AutoML for Clustering Page
 elif page == "AutoML for Clustering":
-    st.title("AutoML for Clustering App Page")
+    st.title("AutoML for Clustering Page")
+
+    # Check if the dataset is available
     if data is not None:
         st.write("Dataset:")
         st.write(data)
         st.write("Dataset Shape:")
         st.write(data.shape)
-
-        st.subheader("AutoML for Clustering")
 
         # Define the maximum allowed dataset size for clustering
         max_rows_for_clustering = 5000
@@ -690,10 +691,17 @@ elif page == "AutoML for Clustering":
 
                 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
                 X_encoded['Cluster'] = kmeans.fit_predict(X_encoded)
+
+                # Download the dataset with added clusters column
+                csv_data_encoded = X_encoded.to_csv(index=False)
+                b64 = base64.b64encode(csv_data_encoded.encode()).decode()
+                href = f'<a href="data:file/csv;base64,{b64}" download="clustered_data.csv">Download Clustered Dataset</a>'
+                st.markdown(href, unsafe_allow_html=True)
+
                 st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
                 st.write(X_encoded)
     else:
-        st.warning("Please upload a dataset to continue.")
+        st.warning("Please upload a dataset in the 'AutoML for Clustering' step to continue.")
 
 # Model Evaluation Page
 elif page == "Model Evaluation":
