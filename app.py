@@ -422,7 +422,7 @@ elif page == "Hyperparameter Tuning":
     st.title("Hyperparameter Tuning Page")
 
     # Check if the dataset and model are available
-    if data is not None and data not empty:
+    if data is not None and not data.empty:
         st.write("Dataset:")
         st.write(data)
         st.write("Dataset Shape:")
