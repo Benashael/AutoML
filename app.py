@@ -428,26 +428,27 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest", "Logistic Regression", "Support Vector Machine"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine", "Decision Tree Classifier", "Random Forest Regressor", "Linear Regression", "Ridge Regression", "Lasso Classifier"])
             # Add more machine learning models as needed
 
-	    if selected_model == "Random Forest Classifier":
-		model = RandomForestClassifier()
-	    elif selected_model == "Logistic Regression":
-		model = LogisticRegression()
-	    elif selected_model == "Decision Tree Classifier":
-		model = DecisionTreeClassifier()
-	    elif selected_model == "Random Forest Regressor":
-		model = RandomForestRegressor()
-	    elif selected_model == "Linear Regression":
-		model = LinearRegression()
-	    elif selected_model == "Ridge Regression":
-		model = Ridge()
-	    elif selected_model == "Lasso Classifier":
-		model = Lasso()
-	    elif selected_model == "Support Vector Machine":
-		model = SVC()
-            
+            if selected_model == "Random Forest Classifier":
+                model = RandomForestClassifier()
+            elif selected_model == "Logistic Regression":
+                model = LogisticRegression()
+            elif selected_model == "Support Vector Machine":
+                model = SVC()
+            elif selected_model == "Decision Tree Classifier":
+                model = DecisionTreeClassifier()
+            elif selected_model == "Random Forest Regressor":
+                model = RandomForestRegressor()
+            elif selected_model == "Linear Regression":
+                model = LinearRegression()
+            elif selected_model == "Ridge Regression":
+                model = Ridge()
+            elif selected_model == "Lasso Classifier":
+                model = Lasso()
+            # Add more models as needed
+
             if model is not None:
                 st.subheader("Hyperparameter Tuning")
 
@@ -465,7 +466,7 @@ elif page == "Hyperparameter Tuning":
 
                 try:
                     # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
-                     
+                    
                     param_grid = {
                         "n_estimators": [hyperparameters["n_estimators"]],
                         "max_depth": [hyperparameters["max_depth"]],
