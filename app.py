@@ -504,7 +504,7 @@ elif page == "Hyperparameter Tuning":
                     target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
                     other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != target_variable])
 
-                    if other variables and target_variable:
+                    if other_variables and target_variable:
                         X_train = data[other_variables]
                         y_train = data[target_variable]
 
