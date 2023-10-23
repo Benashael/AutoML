@@ -581,16 +581,16 @@ elif page == "Hyperparameter Tuning":
             elif selected_model == "Logistic Regression":
                 model = LogisticRegression()
                 hyperparameters = {
-                    "C": [float(st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0)],
-                    "max_iter": [int(st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100)],
+                    "C": [float(st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0))],
+                    "max_iter": [int(st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100))],
                 }
 
             elif selected_model == "Decision Tree Classifier":
                 model = DecisionTreeClassifier()
                 hyperparameters = {
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
-                    "min_samples_leaf": [int(st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10)],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
+                    "min_samples_leaf": [int(st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10))],
                 }
             
             elif selected_model == "Random Forest Regressor":
