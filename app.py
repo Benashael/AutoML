@@ -573,9 +573,9 @@ elif page == "Hyperparameter Tuning":
             if selected_model == "Random Forest Classifier":
                 model = RandomForestClassifier()
                 hyperparameters = {
-                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10)],
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
+                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
                 }
 
             elif selected_model == "Logistic Regression":
@@ -596,9 +596,9 @@ elif page == "Hyperparameter Tuning":
             elif selected_model == "Random Forest Regressor":
                 model = RandomForestRegressor()
                 hyperparameters = {
-                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10)],
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
+                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
                 }
 
             elif selected_model == "Linear Regression":
@@ -611,19 +611,19 @@ elif page == "Hyperparameter Tuning":
             elif selected_model == "Ridge Regression":
                 model = Ridge()
                 hyperparameters = {
-                    "alpha": [float(st.slider("Alpha", 0.001, 10.0)],
+                    "alpha": [float(st.slider("Alpha", 0.001, 10.0))],
                 }
 
             elif selected_model == "Lasso Classifier":
                 model = Lasso()
                 hyperparameters = {
-                    "alpha": [float(st.slider("Alpha", 0.001, 10.0)],
+                    "alpha": [float(st.slider("Alpha", 0.001, 10.0))],
                 }
 
             elif selected_model == "Support Vector Machine":
                 model = SVC()
                 hyperparameters = {
-                    "C": [float(st.slider("Regularization Parameter (C)", 0.001, 10.0)],
+                    "C": [float(st.slider("Regularization Parameter (C)", 0.001, 10.0))],
                     "kernel": [st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid", "precomputed"])],
                 }
 
