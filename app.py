@@ -564,41 +564,25 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest", "Logistic Regression", "Support Vector Machine", "Gradient Boosting"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Regressor (Regression)", "Logistic Regression (Classification)"])
             # Add more machine learning models as needed
 
             model = None
             hyperparameters = {}
 
-            if selected_model == "Random Forest":
+            if selected_model == "Random Forest Classifier (Regression)":
                 model = RandomForestClassifier()
                 hyperparameters = {
-                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
-                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
-                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
                 }
-
-            elif selected_model == "Logistic Regression":
+            
+            elif selected_model == "Logistic Regression (Classification)":
                 model = LogisticRegression()
                 hyperparameters = {
                     "C": st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0),
                     "max_iter": st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100),
-                }
-
-            elif selected_model == "Support Vector Machine":
-                model = SVC()
-                hyperparameters = {
-                    "C": st.slider("Regularization Parameter (C)", 0.001, 10.0),
-                    "kernel": st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid"]),
-                }
-
-            elif selected_model == "Gradient Boosting":
-                model = GradientBoostingClassifier()
-                hyperparameters = {
-                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
-                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
-                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
-                    "learning_rate": st.slider("Learning Rate", 0.001, 1.0),
                 }
 
             # Add hyperparameters for other models as needed
