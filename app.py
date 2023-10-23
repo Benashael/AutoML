@@ -564,14 +564,14 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier (Regression)", "Logistic Regression (Classification)"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Regressor (Regression)", "Logistic Regression (Classification)"])
             # Add more machine learning models as needed
 
             model = None
             hyperparameters = {}
 
-            if selected_model == "Random Forest Classifier (Regression)":
-                model = RandomForestClassifier()
+            if selected_model == "Random Forest Regressor (Regression)":
+                model = RandomForestRegressor()
                 hyperparameters = {
                     "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
                     "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
