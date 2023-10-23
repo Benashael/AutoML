@@ -227,30 +227,12 @@ elif page == "Data Preprocessing":
             st.write("Applied Min-Max Scaling:")
             st.write(data_scaled)
 
-            # Download the scaled dataset
-            if st.download_button(
-                label="Download Scaled Dataset as CSV",
-                data=data_scaled.to_csv(),
-                key="scaled_data.csv",
-                file_name="scaled_data.csv"
-            ):
-                pass  # Download the scaled dataset
-
         elif selected_scaling == "Standardization":
             # Apply Standardization
             scaler = StandardScaler()
             data_scaled = scaler.fit_transform(data)
             st.write("Applied Standardization:")
             st.write(data_scaled)
-
-            # Download the scaled dataset
-            if st.download_button(
-                label="Download Scaled Dataset as CSV",
-                data=data_scaled.to_csv(),
-                key="scaled_data.csv",
-                file_name="scaled_data.csv"
-            ):
-                pass  # Download the scaled dataset
 
         # Step 2: Data Splitting (Train-Test Split)
         st.subheader("Step 2: Data Splitting (Train-Test Split)")
@@ -266,21 +248,11 @@ elif page == "Data Preprocessing":
             selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns)
             selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
 
-            if st.download_button(
-                label="Download Training Data as CSV",
-                data=pd.concat([X_train[selected_x_columns], y_train], axis=1).to_csv(),
-                key="train_data.csv",
-                file_name="train_data.csv"
-            ):
-                pass  # Download the training data
-
-            if st.download_button(
-                label="Download Testing Data as CSV",
-                data=pd.concat([X_test[selected_x_columns], y_test], axis=1).to_csv(),
-                key="test_data.csv",
-                file_name="test_data.csv"
-            ):
-                pass  # Download the testing data
+            # Download the training and testing datasets
+            if st.button("Download Training Data"):
+                download_csv(X_train, "train_data.csv", selected_x_columns + [selected_y_column])
+            if st.button("Download Testing Data"):
+                download_csv(X_test, "test_data.csv", selected_x_columns + [selected_y_column])
 
         else:
             st.error("Invalid test size. Please select a test size greater than 0.")
@@ -298,14 +270,6 @@ elif page == "Data Preprocessing":
             y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
             st.write("Applied Z-Score Outlier Detection and Handling")
 
-            if st.download_button(
-                label="Download Data after Z-Score Handling as CSV",
-                data=pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1).to_csv(),
-                key="outlier_handled_data_zscore.csv",
-                file_name="outlier_handled_data_zscore.csv"
-            ):
-                pass  # Download the dataset after Z-Score outlier handling
-
         elif selected_outlier_method == "IQR":
             # Apply IQR method for outlier detection
             Q1 = X_train.quantile(0.25)
@@ -318,18 +282,8 @@ elif page == "Data Preprocessing":
             y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
             st.write("Applied IQR Outlier Detection and Handling")
 
-            if st.download_button(
-            label="Download Data after IQR Handling as CSV",
-            data=pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1).to_csv(),
-            key="outlier_handled_data_iqr.csv",
-            file_name="outlier_handled_data_iqr.csv"
-        ):
-                pass  # Download the dataset after IQR outlier handling
-
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
-
-
 
 # Data Cleaning Page
 elif page == "Data Cleaning":
