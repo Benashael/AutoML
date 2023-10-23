@@ -4,7 +4,7 @@ import numpy as np
 from lazypredict.Supervised import LazyClassifier, LazyRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, IsolationForest
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -14,7 +14,7 @@ from sklearn.svm import SVC, SVR
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.model_selection import GridSearchCV
 import base64
-from scipy.stats import zscore
+from scipy.stats import zscore 
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -564,28 +564,44 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine", "Decision Tree Classifier", "Random Forest Regressor", "Linear Regression", "Ridge Regression", "Lasso Classifier"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest", "Logistic Regression", "Support Vector Machine", "Gradient Boosting"])
             # Add more machine learning models as needed
 
             model = None
             hyperparameters = {}
 
-            if selected_model == "Random Forest Classifier":
+            if selected_model == "Random Forest":
                 model = RandomForestClassifier()
                 hyperparameters = {
-                    "n_estimators": int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
-                    "min_samples_split": int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
+                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
                 }
 
             elif selected_model == "Logistic Regression":
                 model = LogisticRegression()
                 hyperparameters = {
-                    "C": float(st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0),
-                    "max_iter": int(st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100),
+                    "C": st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0),
+                    "max_iter": st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100),
                 }
 
-            # Add hyperparameters for other models in a similar way
+            elif selected_model == "Support Vector Machine":
+                model = SVC()
+                hyperparameters = {
+                    "C": st.slider("Regularization Parameter (C)", 0.001, 10.0),
+                    "kernel": st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid"]),
+                }
+
+            elif selected_model == "Gradient Boosting":
+                model = GradientBoostingClassifier()
+                hyperparameters = {
+                    "n_estimators": st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
+                    "max_depth": st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "min_samples_split": st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
+                    "learning_rate": st.slider("Learning Rate", 0.001, 1.0),
+                }
+
+            # Add hyperparameters for other models as needed
 
             if model is not None:
                 st.subheader("Hyperparameter Tuning")
@@ -605,17 +621,19 @@ elif page == "Hyperparameter Tuning":
                         X_train = data[other_variables]
                         y_train = data[target_variable]
 
-                        # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
-                        from sklearn.model_selection import GridSearchCV
+                        # Perform hyperparameter tuning using RandomizedSearchCV
 
-                        param_grid = {}
+                        param_dist = {}
                         for param_name, param_value in hyperparameters.items():
-                            param_grid[param_name] = [param_value]
+                            if isinstance(param_value, float):
+                                param_dist[param_name] = np.arange(param_value, param_value + 0.1, 0.01)
+                            else:
+                                param_dist[param_name] = list(range(param_value))
 
-                        grid_search = GridSearchCV(model, param_grid, cv=5)
-                        grid_search.fit(X_train, y_train)
+                        randomized_search = RandomizedSearchCV(model, param_distributions=param_dist, n_iter=10, cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=42), n_jobs=-1)
+                        randomized_search.fit(X_train, y_train)
 
-                        best_hyperparameters = grid_search.best_params_
+                        best_hyperparameters = randomized_search.best_params_
 
                         # Display the best hyperparameters and their performance
                         st.subheader("Best Hyperparameters")
@@ -623,7 +641,7 @@ elif page == "Hyperparameter Tuning":
 
                         # Display the model's performance with the best hyperparameters
                         st.subheader("Model Performance with Best Hyperparameters")
-                        best_model = grid_search.best_estimator_
+                        best_model = randomized_search.best_estimator_
 
                         # Split the data for evaluation
                         X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
@@ -638,8 +656,8 @@ elif page == "Hyperparameter Tuning":
                     st.error(f"An error occurred during hyperparameter tuning: {str(e)}")
             else:
                 st.error("An error occurred while selecting the model. Please try again.")
-    else:
-        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
+        else:
+            st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
