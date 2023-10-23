@@ -215,30 +215,33 @@ elif page == "Data Preprocessing":
 
         st.subheader("Data Preprocessing Steps")
 
-        # Step 1: Feature Scaling and Normalization
-        st.subheader("Step 1: Feature Scaling and Normalization")
-        
-        numerical_cols = data.select_dtypes(include=[np.number]).columns
-        
-        if not numerical_cols.empty:
-            selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", ["Min-Max Scaling", "Standardization"])
-            
-            if selected_scaling == "Min-Max Scaling":
-                # Apply Min-Max Scaling
-                scaler = MinMaxScaler()
-                data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
-                st.write("Applied Min-Max Scaling:")
-                st.write(data)
+        # Step 1: Feature Scaling and Normalization (Limit to datasets with max size)
+        if data.shape[0] <= 5000 and data.shape[1] <= 50:
+            st.subheader("Step 1: Feature Scaling and Normalization")
 
-            elif selected_scaling == "Standardization":
-                # Apply Standardization
-                scaler = StandardScaler()
-                data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
-                st.write("Applied Standardization:")
-                st.write(data)
+            numerical_cols = data.select_dtypes(include=[np.number]).columns
+
+            if not numerical_cols.empty:
+                selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", ["Min-Max Scaling", "Standardization"])
+
+                if selected_scaling == "Min-Max Scaling":
+                    # Apply Min-Max Scaling
+                    scaler = MinMaxScaler()
+                    data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+                    st.write("Applied Min-Max Scaling:")
+                    st.write(data)
+
+                elif selected_scaling == "Standardization":
+                    # Apply Standardization
+                    scaler = StandardScaler()
+                    data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+                    st.write("Applied Standardization:")
+                    st.write(data)
+            else:
+                st.warning("No numerical columns found in the dataset for scaling.")
         else:
-            st.warning("No numerical columns found in the dataset for scaling.")
-        
+            st.warning("Feature Scaling and Normalization is limited to datasets with a maximum of 5000 rows and 50 columns.")
+
         # Step 2: Data Splitting (Train-Test Split)
         st.subheader("Step 2: Data Splitting (Train-Test Split)")
         test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
@@ -258,63 +261,73 @@ elif page == "Data Preprocessing":
                     training_data = pd.concat([X_train, y_train], axis=1)
                     csv = training_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Click here to Download Training Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Download Training Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
 
                 if st.button("Download Testing Data"):
                     testing_data = pd.concat([X_test, y_test], axis=1)
                     csv = testing_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Click here to Download Testing Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Download Testing Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
             else:
                 st.error("Please select a valid target variable and at least one other variable.")
         else:
             st.error("Invalid test size. Please select a test size greater than 0.")
 
-        # Step 4: Outlier Detection and Handling
-        st.subheader("Step 4: Outlier Detection and Handling")
-        outlier_methods = ["Z-Score", "IQR"]
-        selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
+        # Step 4: Outlier Detection and Handling (Limit to datasets with max size)
+        if data.shape[0] <= 5000 and data.shape[1] <= 50:
+            st.subheader("Step 4: Outlier Detection and Handling")
 
-        if numerical_cols.empty:
-            st.warning("No numerical columns found in the dataset for outlier detection.")
+            outlier_methods = ["Z-Score", "IQR"]
+            selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
+
+            numerical_cols = data.select_dtypes(include=[np.number]).columns
+
+            if not numerical_cols.empty:
+                selected_x_column = st.selectbox("Select X Column for Outlier Detection:", numerical_cols)
+                selected_y_column = st.selectbox("Select Y Column for Outlier Detection:", numerical_cols)
+
+                if selected_outlier_method == "Z-Score":
+                    # Apply Z-Score method for outlier detection
+                    z_scores = zscore(data[selected_x_column])
+                    outlier_indices = np.where(np.abs(z_scores) > 3)
+                    data_no_outliers = data.drop(outlier_indices[0])
+                    st.write("Applied Z-Score Outlier Detection and Handling")
+                    st.write("Dataset after Z-Score Outlier Handling:")
+                    st.write(data_no_outliers)
+
+                    if st.button("Download Data after Z-Score Handling"):
+                        cleaned_data = data_no_outliers
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Download Data after Z-Score Handling</a>'
+                        st.markdown(href, unsafe_allow_html=True)
+
+                elif selected_outlier_method == "IQR":
+                    # Apply IQR method for outlier detection
+                    Q1 = data[selected_x_column].quantile(0.25)
+                    Q3 = data[selected_x_column].quantile(0.75)
+                    IQR = Q3 - Q1
+                    lower_bound = Q1 - 1.5 * IQR
+                    upper_bound = Q3 + 1.5 * IQR
+
+                    outlier_indices = ((data[selected_x_column] < lower_bound) | (data[selected_x_column] > upper_bound))
+                    data_no_outliers = data[~outlier_indices]
+                    st.write("Applied IQR Outlier Detection and Handling")
+                    st.write("Dataset after IQR Outlier Handling:")
+                    st.write(data_no_outliers)
+
+                    if st.button("Download Data after IQR Handling"):
+                        cleaned_data = data_no_outliers
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Download Data after IQR Handling</a>'
+                        st.markdown(href, unsafe_allow_html=True)
+            else:
+                st.warning("No numerical columns found in the dataset for outlier detection.")
         else:
-            selected_x_column = st.selectbox("Select X Column for Outlier Detection:", numerical_cols)
-            selected_y_column = st.selectbox("Select Y Column for Outlier Detection:", numerical_cols)
-            
-            if selected_outlier_method == "Z-Score":
-                # Apply Z-Score method for outlier detection
-                z_scores = zscore(data[selected_x_column])
-                outlier_indices = np.where(np.abs(z_scores) > 3)
-                data_no_outliers = data.drop(outlier_indices[0])
-                st.write("Applied Z-Score Outlier Detection and Handling")
-
-                if st.button("Download Data after Z-Score Handling"):
-                    cleaned_data = data_no_outliers
-                    csv = cleaned_data.to_csv(index=False)
-                    b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Click here to Download Data after Z-Score Handling</a>'
-                    st.markdown(href, unsafe_allow_html=True)
-
-            elif selected_outlier_method == "IQR":
-                # Apply IQR method for outlier detection
-                Q1 = data[selected_x_column].quantile(0.25)
-                Q3 = data[selected_x_column].quantile(0.75)
-                IQR = Q3 - Q1
-                lower_bound = Q1 - 1.5 * IQR
-                upper_bound = Q3 + 1.5 * IQR
-                
-                outlier_indices = ((data[selected_x_column] < lower_bound) | (data[selected_x_column] > upper_bound))
-                data_no_outliers = data[~outlier_indices]
-                st.write("Applied IQR Outlier Detection and Handling")
-
-                if st.button("Download Data after IQR Handling"):
-                    cleaned_data = data_no_outliers
-                    csv = cleaned_data.to_csv(index=False)
-                    b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Click here to Download Data after IQR Handling</a>'
-                    st.markdown(href, unsafe_allow_html=True)
+            st.warning("Outlier Detection and Handling is limited to datasets with a maximum of 5000 rows and 50 columns.")
 
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
