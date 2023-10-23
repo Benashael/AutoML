@@ -239,14 +239,12 @@ elif page == "Data Preprocessing":
         test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
 
         if test_size > 0:
-            X = data.drop(columns=["target_variable"], axis=1)
-            y = data["target_variable"]
+            selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns) # Ask the user to specify X and y columns for downloading
+            selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
+            X = data["selected_x_columns"]
+            y = data["selected_y_column"]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
             st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
-
-            # Ask the user to specify X and y columns for downloading
-            selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns)
-            selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
 
             # Download the training and testing datasets
             if st.button("Download Training Data"):
