@@ -574,7 +574,7 @@ elif page == "Hyperparameter Tuning":
                 model = RandomForestClassifier()
                 hyperparameters = {
                     "n_estimators": int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10),
-                    "max_depth": int(st.slider("Maximum Depth (max_depth)", 1, 20),
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
                     "min_samples_split": int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10),
                 }
 
