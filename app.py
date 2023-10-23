@@ -239,7 +239,7 @@ elif page == "Data Preprocessing":
         test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
 
         if test_size > 0:
-            X = data.drop(columns=["target_variable"])
+            X = data.drop(columns=["target_variable"], axis=1)
             y = data["target_variable"]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
             st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
