@@ -43,7 +43,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Preprocessing", "Data Cleaning", "Data Encoding", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation"])
 
 # Introduction Page
 if page == "Home Page":
@@ -217,23 +217,28 @@ elif page == "Data Preprocessing":
 
         # Step 1: Feature Scaling and Normalization
         st.subheader("Step 1: Feature Scaling and Normalization")
-        scaling_methods = ["Min-Max Scaling", "Standardization"]
-        selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", scaling_methods)
+        
+        numerical_cols = data.select_dtypes(include=[np.number]).columns
+        
+        if not numerical_cols.empty:
+            selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", ["Min-Max Scaling", "Standardization"])
+            
+            if selected_scaling == "Min-Max Scaling":
+                # Apply Min-Max Scaling
+                scaler = MinMaxScaler()
+                data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+                st.write("Applied Min-Max Scaling:")
+                st.write(data)
 
-        if selected_scaling == "Min-Max Scaling":
-            # Apply Min-Max Scaling
-            scaler = MinMaxScaler()
-            data_scaled = scaler.fit_transform(data)
-            st.write("Applied Min-Max Scaling:")
-            st.write(data_scaled)
-
-        elif selected_scaling == "Standardization":
-            # Apply Standardization
-            scaler = StandardScaler()
-            data_scaled = scaler.fit_transform(data)
-            st.write("Applied Standardization:")
-            st.write(data_scaled)
-
+            elif selected_scaling == "Standardization":
+                # Apply Standardization
+                scaler = StandardScaler()
+                data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+                st.write("Applied Standardization:")
+                st.write(data)
+        else:
+            st.warning("No numerical columns found in the dataset for scaling.")
+        
         # Step 2: Data Splitting (Train-Test Split)
         st.subheader("Step 2: Data Splitting (Train-Test Split)")
         test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
@@ -249,19 +254,18 @@ elif page == "Data Preprocessing":
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
                 st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
 
-                # Download the training and testing datasets
                 if st.button("Download Training Data"):
                     training_data = pd.concat([X_train, y_train], axis=1)
                     csv = training_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Download Training Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Click here to Download Training Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
 
                 if st.button("Download Testing Data"):
                     testing_data = pd.concat([X_test, y_test], axis=1)
                     csv = testing_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Download Testing Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Click here to Download Testing Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
             else:
                 st.error("Please select a valid target variable and at least one other variable.")
@@ -273,33 +277,44 @@ elif page == "Data Preprocessing":
         outlier_methods = ["Z-Score", "IQR"]
         selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
 
-        if selected_outlier_method == "Z-Score":
-            # Apply Z-Score method for outlier detection
-            z_scores = zscore(X_train)
-            outlier_indices = np.where(np.abs(z_scores) > 3)
-            X_train_no_outliers = X_train[(np.abs(z_scores) <= 3).all(axis=1)]
-            y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
-            st.write("Applied Z-Score Outlier Detection and Handling")
+        if numerical_cols.empty:
+            st.warning("No numerical columns found in the dataset for outlier detection.")
+        else:
+            selected_x_column = st.selectbox("Select X Column for Outlier Detection:", numerical_cols)
+            selected_y_column = st.selectbox("Select Y Column for Outlier Detection:", numerical_cols)
+            
+            if selected_outlier_method == "Z-Score":
+                # Apply Z-Score method for outlier detection
+                z_scores = zscore(data[selected_x_column])
+                outlier_indices = np.where(np.abs(z_scores) > 3)
+                data_no_outliers = data.drop(outlier_indices[0])
+                st.write("Applied Z-Score Outlier Detection and Handling")
 
-            # Download the dataset after Z-Score outlier handling
-            if st.button("Download Data after Z-Score Handling"):
-                download_csv(X_train_no_outliers.join(y_train_no_outliers), "outlier_handled_data.csv")
+                if st.button("Download Data after Z-Score Handling"):
+                    cleaned_data = data_no_outliers
+                    csv = cleaned_data.to_csv(index=False)
+                    b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                    href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Click here to Download Data after Z-Score Handling</a>'
+                    st.markdown(href, unsafe_allow_html=True)
 
-        elif selected_outlier_method == "IQR":
-            # Apply IQR method for outlier detection
-            Q1 = X_train.quantile(0.25)
-            Q3 = X_train.quantile(0.75)
-            IQR = Q3 - Q1
-            lower_bound = Q1 - 1.5 * IQR
-            upper_bound = Q3 + 1.5 * IQR
-            outlier_indices = ((X_train < lower_bound) | (X_train > upper_bound)).any(axis=1)
-            X_train_no_outliers = X_train[~outlier_indices]
-            y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
-            st.write("Applied IQR Outlier Detection and Handling")
+            elif selected_outlier_method == "IQR":
+                # Apply IQR method for outlier detection
+                Q1 = data[selected_x_column].quantile(0.25)
+                Q3 = data[selected_x_column].quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - 1.5 * IQR
+                upper_bound = Q3 + 1.5 * IQR
+                
+                outlier_indices = ((data[selected_x_column] < lower_bound) | (data[selected_x_column] > upper_bound))
+                data_no_outliers = data[~outlier_indices]
+                st.write("Applied IQR Outlier Detection and Handling")
 
-            # Download the dataset after IQR outlier handling
-            if st.button("Download Data after IQR Handling"):
-                download_csv(X_train_no_outliers.join(y_train_no_outliers), "outlier_handled_data.csv")
+                if st.button("Download Data after IQR Handling"):
+                    cleaned_data = data_no_outliers
+                    csv = cleaned_data.to_csv(index=False)
+                    b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                    href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Click here to Download Data after IQR Handling</a>'
+                    st.markdown(href, unsafe_allow_html=True)
 
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
@@ -833,7 +848,7 @@ elif page == "AutoML for Clustering":
                 # Download the dataset with added clusters column
                 csv_data_encoded = X_encoded.to_csv(index=False)
                 b64 = base64.b64encode(csv_data_encoded.encode()).decode()
-                href = f'<a href="data:file/csv;base64,{b64}" download="clustered_data.csv">Download Clustered Dataset</a>'
+                href = f'<a href="data:file/csv;base64,{b64}" download="clustered_data.csv">Click here to Download Clustered Dataset</a>'
                 st.markdown(href, unsafe_allow_html=True)
 
                 st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
