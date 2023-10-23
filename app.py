@@ -213,98 +213,88 @@ elif page == "Data Preprocessing":
         st.write("Dataset Shape:")
         st.write(data.shape)
 
-        # Limit for dataset size
-        max_rows_for_preprocessing = 5000
-        max_columns_for_preprocessing = 50
+        st.subheader("Data Preprocessing Steps")
 
-        if data.shape[0] > max_rows_for_preprocessing or data.shape[1] > max_columns_for_preprocessing:
-            st.warning(f"Note: The dataset size exceeds the maximum allowed for data preprocessing (max rows: {max_rows_for_preprocessing}, max columns: {max_columns_for_preprocessing}).")
+        # Step 1: Feature Scaling and Normalization
+        st.subheader("Step 1: Feature Scaling and Normalization")
+        scaling_methods = ["Min-Max Scaling", "Standardization"]
+        selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", scaling_methods)
+
+        if selected_scaling == "Min-Max Scaling":
+            # Apply Min-Max Scaling
+            scaler = MinMaxScaler()
+            data_scaled = scaler.fit_transform(data)
+            st.write("Applied Min-Max Scaling:")
+            st.write(data_scaled)
+
+            # Download the scaled dataset
+            if st.download_button("Download Scaled Dataset", data_scaled.to_csv(), key="scaled_dataset"):
+                pass  # Nothing needs to be done, as the download is handled by the button
+
+        elif selected_scaling == "Standardization":
+            # Apply Standardization
+            scaler = StandardScaler()
+            data_scaled = scaler.fit_transform(data)
+            st.write("Applied Standardization:")
+            st.write(data_scaled)
+
+            # Download the scaled dataset
+            if st.download_button("Download Scaled Dataset", data_scaled.to_csv(), key="scaled_dataset"):
+                pass  # Nothing needs to be done, as the download is handled by the button
+
+        # Step 2: Data Splitting (Train-Test Split)
+        st.subheader("Step 2: Data Splitting (Train-Test Split)")
+        test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
+
+        if test_size > 0:
+            X = data.drop(columns=["target_variable"])
+            y = data["target_variable"]
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+            st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
+
+            # Ask the user to specify X and y columns for downloading
+            selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns)
+            selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
+
+            if st.download_button("Download Training Data", X_train[selected_x_columns + [selected_y_column]].to_csv(), key="train_data"):
+                pass  # Download the training data
+
+            if st.download_button("Download Testing Data", X_test[selected_x_columns + [selected_y_column]].to_csv(), key="test_data"):
+                pass  # Download the testing data
+
         else:
-            st.subheader("Data Preprocessing Steps")
+            st.error("Invalid test size. Please select a test size greater than 0.")
 
-            # Step 1: Feature Scaling and Normalization
-            st.subheader("Step 1: Feature Scaling and Normalization")
-            scaling_methods = ["Min-Max Scaling", "Standardization"]
-            selected_scaling = st.radio("Select Feature Scaling or Normalization Method:", scaling_methods)
+        # Step 4: Outlier Detection and Handling
+        st.subheader("Step 4: Outlier Detection and Handling")
+        outlier_methods = ["Z-Score", "IQR"]
+        selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
 
-            if selected_scaling == "Min-Max Scaling":
-                # Apply Min-Max Scaling
-                scaler = MinMaxScaler()
-                data_scaled = scaler.fit_transform(data)
-                st.write("Applied Min-Max Scaling:")
-                st.write(data_scaled)
+        if selected_outlier_method == "Z-Score":
+            # Apply Z-Score method for outlier detection
+            z_scores = zscore(X_train)
+            outlier_indices = np.where(np.abs(z_scores) > 3)
+            X_train_no_outliers = X_train[(np.abs(z_scores) <= 3).all(axis=1)]
+            y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
+            st.write("Applied Z-Score Outlier Detection and Handling")
 
-                # Download the scaled dataset
-                if st.button("Download Scaled Dataset"):
-                    download_csv(data_scaled, "scaled_dataset.csv")
+            if st.download_button("Download Data after Z-Score Handling", pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1).to_csv(), key="outlier_handled_data_zscore"):
+                pass  # Download the dataset after Z-Score outlier handling
 
-            elif selected_scaling == "Standardization":
-                # Apply Standardization
-                scaler = StandardScaler()
-                data_scaled = scaler.fit_transform(data)
-                st.write("Applied Standardization:")
-                st.write(data_scaled)
+        elif selected_outlier_method == "IQR":
+            # Apply IQR method for outlier detection
+            Q1 = X_train.quantile(0.25)
+            Q3 = X_train.quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            outlier_indices = ((X_train < lower_bound) | (X_train > upper_bound)).any(axis=1)
+            X_train_no_outliers = X_train[~outlier_indices]
+            y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
+            st.write("Applied IQR Outlier Detection and Handling")
 
-                # Download the scaled dataset
-                if st.button("Download Scaled Dataset"):
-                    download_csv(data_scaled, "scaled_dataset.csv")
-
-            # Step 2: Data Splitting (Train-Test Split)
-            st.subheader("Step 2: Data Splitting (Train-Test Split)")
-            test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
-
-            if test_size > 0:
-                X = data.drop(columns=["target_variable"])
-                y = data["target_variable"]
-                
-                # Ask the user to specify X and Y columns
-                selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns)
-                selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
-
-                X_train, X_test, y_train, y_test = train_test_split(X[selected_x_columns], y, test_size=test_size, random_state=42)
-                st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
-
-                # Download the training and testing datasets
-                if st.button("Download Training Data"):
-                    download_csv(pd.concat([X_train, y_train], axis=1), "train_data.csv")
-                if st.button("Download Testing Data"):
-                    download_csv(pd.concat([X_test, y_test], axis=1), "test_data.csv")
-
-            else:
-                st.error("Invalid test size. Please select a test size greater than 0.")
-
-            # Step 4: Outlier Detection and Handling
-            st.subheader("Step 4: Outlier Detection and Handling")
-            outlier_methods = ["Z-Score", "IQR"]
-            selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
-
-            if selected_outlier_method == "Z-Score":
-                # Apply Z-Score method for outlier detection
-                z_scores = zscore(X_train)
-                outlier_indices = np.where(np.abs(z_scores) > 3)
-                X_train_no_outliers = X_train[(np.abs(z_scores) <= 3).all(axis=1)]
-                y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
-                st.write("Applied Z-Score Outlier Detection and Handling")
-
-                # Download the dataset after Z-Score outlier handling
-                if st.button("Download Data after Z-Score Handling"):
-                    download_csv(pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1), "outlier_handled_data.csv")
-
-            elif selected_outlier_method == "IQR":
-                # Apply IQR method for outlier detection
-                Q1 = X_train.quantile(0.25)
-                Q3 = X_train.quantile(0.75)
-                IQR = Q3 - Q1
-                lower_bound = Q1 - 1.5 * IQR
-                upper_bound = Q3 + 1.5 * IQR
-                outlier_indices = ((X_train < lower_bound) | (X_train > upper_bound)).any(axis=1)
-                X_train_no_outliers = X_train[~outlier_indices]
-                y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
-                st.write("Applied IQR Outlier Detection and Handling")
-
-                # Download the dataset after IQR outlier handling
-                if st.button("Download Data after IQR Handling"):
-                    download_csv(pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1), "outlier_handled_data.csv")
+            if st.download_button("Download Data after IQR Handling", pd.concat([X_train_no_outliers, y_train_no_outliers], axis=1).to_csv(), key="outlier_handled_data_iqr"):
+                pass  # Download the dataset after IQR outlier handling
 
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
