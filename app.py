@@ -69,7 +69,7 @@ if page == "Home Page":
 
     st.subheader("Data Preprocessing Page")
     st.markdown(
-        "The **Data Preprocessing Page* prepares your dataset for machine learning by scaling features, splitting data, and handling outliers."
+        "The **Data Preprocessing Page** prepares your dataset for machine learning by scaling features, splitting data, and handling outliers."
     )
     
     st.subheader("Data Cleaning Page")
