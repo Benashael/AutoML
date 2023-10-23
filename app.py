@@ -297,13 +297,6 @@ elif page == "Data Preprocessing":
                     st.write("Dataset after Z-Score Outlier Handling:")
                     st.write(data_no_outliers)
 
-                    if st.button("Download Data after Z-Score Handling"):
-                        cleaned_data = data_no_outliers
-                        csv = cleaned_data.to_csv(index=False)
-                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Download Data after Z-Score Handling</a>'
-                        st.markdown(href, unsafe_allow_html=True)
-
                 elif selected_outlier_method == "IQR":
                     # Apply IQR method for outlier detection
                     Q1 = data[selected_x_column].quantile(0.25)
@@ -318,12 +311,6 @@ elif page == "Data Preprocessing":
                     st.write("Dataset after IQR Outlier Handling:")
                     st.write(data_no_outliers)
 
-                    if st.button("Download Data after IQR Handling"):
-                        cleaned_data = data_no_outliers
-                        csv = cleaned_data.to_csv(index=False)
-                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Download Data after IQR Handling</a>'
-                        st.markdown(href, unsafe_allow_html=True)
             else:
                 st.warning("No numerical columns found in the dataset for outlier detection.")
         else:
