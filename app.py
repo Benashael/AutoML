@@ -656,8 +656,8 @@ elif page == "Hyperparameter Tuning":
                     st.error(f"An error occurred during hyperparameter tuning: {str(e)}")
             else:
                 st.error("An error occurred while selecting the model. Please try again.")
-        else:
-            st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
+    else:
+        st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "ML Model Selection":
     st.title("ML Model Selection App Page")
