@@ -62,14 +62,19 @@ if page == "Home Page":
         "The **Data Profiling Page** allows you to gain a detailed understanding of your dataset. Explore dataset shape, column names, data types, summary statistics, categorical features, missing values, correlation matrix, and data head."
     )
 
-    st.subheader("Data Cleaning Page")
-    st.markdown(
-        "The **Data Cleaning Page** allows you to clean missing values in your dataset. Select a dataset and apply different cleaning techniques to handle missing values."
-    )
-
     st.subheader("Data Encoding Page")
     st.markdown(
         "The **Data Encoding Page** empowers you to encode categorical variables in the dataset. Select a dataset and apply different encoding techniques to handle categorical variables."
+    )
+
+    st.subheader("Data Preprocessing Page")
+    st.markdown(
+        "The **Data Preprocessing Page* prepares your dataset for machine learning by scaling features, splitting data, and handling outliers."
+    )
+    
+    st.subheader("Data Cleaning Page")
+    st.markdown(
+        "The **Data Cleaning Page** allows you to clean missing values in your dataset. Select a dataset and apply different cleaning techniques to handle missing values."
     )
 
     st.subheader("Data Visualization Page")
@@ -132,6 +137,9 @@ if page == "Home Page":
     )
     st.markdown(
         "6. Don't hesitate to reach out for assistance or if you have any questions about using the application effectively."
+    )
+    st.markdown(
+        "7. You can also download the cleaned dataset, encoded daaset, training/testing datasets and clustered dataset for further analysis."
     )
 
     st.markdown(
@@ -201,6 +209,58 @@ elif page == "Data Profiling":
 
     else:
         st.error("Please upload a valid dataset in the 'Data Profiling' step to continue.")
+
+# Data Encoding Page
+elif page == "Data Encoding":
+    st.title("Data Encoding App Page")
+    if data is not None:
+        st.write("Dataset:")
+        st.write(data)
+        st.write("Dataset Shape:")
+        st.write(data.shape)
+
+        # Define the maximum allowed dataset size for data encoding
+        max_rows_for_encoding = 5000
+        max_columns_for_encoding = 50
+
+        if data.shape[0] > max_rows_for_encoding or data.shape[1] > max_columns_for_encoding:
+            st.warning(f"Note: The dataset size exceeds the maximum allowed for data encoding (max rows: {max_rows_for_encoding}, max columns: {max_columns_for_encoding}).")
+        else:
+            st.subheader("Encode Categorical Variables")
+            categorical_cols = data.select_dtypes(include=["object"]).columns
+
+            if not categorical_cols.empty:
+                selected_cols = st.multiselect("Select Categorical Columns to Encode", categorical_cols)
+
+                if not selected_cols:
+                    st.warning("Please select one or more categorical columns to encode.")
+                else:
+                    for col in selected_cols:
+                        encoding_option = st.radio(f"Select Encoding Method for '{col}'", ["Label Encoding", "One-Hot Encoding"])
+
+                        if encoding_option == "Label Encoding":
+                            le = LabelEncoder()
+                            data[col] = le.fit_transform(data[col])
+                        else:
+                            data = pd.get_dummies(data, columns=[col], prefix=[col])
+                    
+                    st.write("Data After Encoding Categorical Variables:")
+                    st.write(data)
+
+                    # Allow users to download the encoded dataset
+                    if st.button("Download Encoded Dataset"):
+                        encoded_csv = data.to_csv(index=False)
+                        encoded_csv = encoded_csv.encode()
+                        st.download_button(
+                            label="Click here to download encoded dataset as CSV",
+                            data=encoded_csv,
+                            key="encoded_data.csv",
+                            file_name="encoded_data.csv"
+                        )
+            else:
+                st.warning("No categorical columns found in the dataset for encoding.")
+    else:
+        st.warning("Please upload a dataset to continue.")
 
 # Data Preprocessing Page
 elif page == "Data Preprocessing":
@@ -395,58 +455,6 @@ elif page == "Data Cleaning":
             )
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
-
-# Data Encoding Page
-elif page == "Data Encoding":
-    st.title("Data Encoding App Page")
-    if data is not None:
-        st.write("Dataset:")
-        st.write(data)
-        st.write("Dataset Shape:")
-        st.write(data.shape)
-
-        # Define the maximum allowed dataset size for data encoding
-        max_rows_for_encoding = 5000
-        max_columns_for_encoding = 50
-
-        if data.shape[0] > max_rows_for_encoding or data.shape[1] > max_columns_for_encoding:
-            st.warning(f"Note: The dataset size exceeds the maximum allowed for data encoding (max rows: {max_rows_for_encoding}, max columns: {max_columns_for_encoding}).")
-        else:
-            st.subheader("Encode Categorical Variables")
-            categorical_cols = data.select_dtypes(include=["object"]).columns
-
-            if not categorical_cols.empty:
-                selected_cols = st.multiselect("Select Categorical Columns to Encode", categorical_cols)
-
-                if not selected_cols:
-                    st.warning("Please select one or more categorical columns to encode.")
-                else:
-                    for col in selected_cols:
-                        encoding_option = st.radio(f"Select Encoding Method for '{col}'", ["Label Encoding", "One-Hot Encoding"])
-
-                        if encoding_option == "Label Encoding":
-                            le = LabelEncoder()
-                            data[col] = le.fit_transform(data[col])
-                        else:
-                            data = pd.get_dummies(data, columns=[col], prefix=[col])
-                    
-                    st.write("Data After Encoding Categorical Variables:")
-                    st.write(data)
-
-                    # Allow users to download the encoded dataset
-                    if st.button("Download Encoded Dataset"):
-                        encoded_csv = data.to_csv(index=False)
-                        encoded_csv = encoded_csv.encode()
-                        st.download_button(
-                            label="Click here to download encoded dataset as CSV",
-                            data=encoded_csv,
-                            key="encoded_data.csv",
-                            file_name="encoded_data.csv"
-                        )
-            else:
-                st.warning("No categorical columns found in the dataset for encoding.")
-    else:
-        st.warning("Please upload a dataset to continue.")
 
 elif page == "Data Visualization":
     st.title("Data Visualization App Page")
