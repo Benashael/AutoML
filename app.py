@@ -567,61 +567,64 @@ elif page == "Hyperparameter Tuning":
             selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Support Vector Machine", "Decision Tree Classifier", "Random Forest Regressor", "Linear Regression", "Ridge Regression", "Lasso Classifier"])
             # Add more machine learning models as needed
 
+            model = None
+            hyperparameters = {}
+
             if selected_model == "Random Forest Classifier":
                 model = RandomForestClassifier()
                 hyperparameters = {
-                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
+                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10)],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
                 }
 
             elif selected_model == "Logistic Regression":
                 model = LogisticRegression()
                 hyperparameters = {
-                    "C": [float(st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0))],
-                    "max_iter": [int(st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100))],
+                    "C": [float(st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0)],
+                    "max_iter": [int(st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100)],
                 }
 
             elif selected_model == "Decision Tree Classifier":
                 model = DecisionTreeClassifier()
                 hyperparameters = {
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
-                    "min_samples_leaf": [int(st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10))],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
+                    "min_samples_leaf": [int(st.slider("Minimum Samples Leaf (min_samples_leaf)", 1, 10)],
                 }
             
             elif selected_model == "Random Forest Regressor":
                 model = RandomForestRegressor()
                 hyperparameters = {
-                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10))],
-                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20))],
-                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10))],
+                    "n_estimators": [int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10)],
+                    "max_depth": [int(st.slider("Maximum Depth (max_depth)", 1, 20)],
+                    "min_samples_split": [int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)],
                 }
 
             elif selected_model == "Linear Regression":
                 model = LinearRegression()
                 hyperparameters = {
                     "normalize": [st.checkbox("Normalize", value=True)],
-                    "n_jobs": [int(st.slider("Number of Jobs (n_jobs)", -1, 8))],
+                    "n_jobs": [int(st.slider("Number of Jobs (n_jobs)", -1, 8)],
                 }
 
             elif selected_model == "Ridge Regression":
                 model = Ridge()
                 hyperparameters = {
-                    "alpha": [float(st.slider("Alpha", 0.001, 10.0))],
+                    "alpha": [float(st.slider("Alpha", 0.001, 10.0)],
                 }
 
             elif selected_model == "Lasso Classifier":
                 model = Lasso()
                 hyperparameters = {
-                    "alpha": [float(st.slider("Alpha", 0.001, 10.0))],
+                    "alpha": [float(st.slider("Alpha", 0.001, 10.0)],
                 }
 
             elif selected_model == "Support Vector Machine":
                 model = SVC()
                 hyperparameters = {
-                    "C": [float(st.slider("Regularization Parameter (C)", 0.001, 10.0))],
-                    "kernel": st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid", "precomputed"]),
+                    "C": [float(st.slider("Regularization Parameter (C)", 0.001, 10.0)],
+                    "kernel": [st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid", "precomputed"])],
                 }
 
             # Add more models and hyperparameters as needed
@@ -647,11 +650,9 @@ elif page == "Hyperparameter Tuning":
                         # Perform hyperparameter tuning here using GridSearchCV or RandomizedSearchCV
                         from sklearn.model_selection import GridSearchCV
 
-                        param_grid = {
-                            "n_estimators": hyperparameters["n_estimators"],
-                            "max_depth": hyperparameters["max_depth"],
-                            "min_samples_split": hyperparameters["min_samples_split"],
-                        }
+                        param_grid = {}
+                        for param_name, param_values in hyperparameters.items():
+                            param_grid[param_name] = [param_value[0] for param_value in param_values]
 
                         grid_search = GridSearchCV(model, param_grid, cv=5)
                         grid_search.fit(X_train, y_train)
