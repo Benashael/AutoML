@@ -239,19 +239,23 @@ elif page == "Data Preprocessing":
         test_size = st.slider("Select the Test Data Proportion:", 0.1, 0.5, step=0.05)
 
         if test_size > 0:
-            selected_x_columns = st.multiselect("Select X Columns:", X.columns, default=X.columns) # Ask the user to specify X and y columns for downloading
-            selected_y_column = st.selectbox("Select Y Column:", [col for col in data.columns if col != "target_variable"])
-            X = data["selected_x_columns"]
-            y = data["selected_y_column"]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-            st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
+            target_variable = st.selectbox("Select the Target Variable (y):", data.columns)
+            other_variables = st.multiselect("Select Other Variables (X):", [col for col in data.columns if col != target_variable])
 
-            # Download the training and testing datasets
-            if st.button("Download Training Data"):
-                download_csv(X_train, "train_data.csv", selected_x_columns + [selected_y_column])
-            if st.button("Download Testing Data"):
-                download_csv(X_test, "test_data.csv", selected_x_columns + [selected_y_column])
+            if target_variable and other_variables:
+                X = data[other_variables]
+                y = data[target_variable]
 
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+                st.write(f"Performed Train-Test Split with test size {test_size:.2f}")
+
+                # Download the training and testing datasets
+                if st.button("Download Training Data"):
+                    download_csv(X_train.join(y_train), "train_data.csv")
+                if st.button("Download Testing Data"):
+                    download_csv(X_test.join(y_test), "test_data.csv")
+            else:
+                st.error("Please select a valid target variable and at least one other variable.")
         else:
             st.error("Invalid test size. Please select a test size greater than 0.")
 
@@ -268,6 +272,10 @@ elif page == "Data Preprocessing":
             y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
             st.write("Applied Z-Score Outlier Detection and Handling")
 
+            # Download the dataset after Z-Score outlier handling
+            if st.button("Download Data after Z-Score Handling"):
+                download_csv(X_train_no_outliers.join(y_train_no_outliers), "outlier_handled_data.csv")
+
         elif selected_outlier_method == "IQR":
             # Apply IQR method for outlier detection
             Q1 = X_train.quantile(0.25)
@@ -279,6 +287,10 @@ elif page == "Data Preprocessing":
             X_train_no_outliers = X_train[~outlier_indices]
             y_train_no_outliers = y_train.iloc[X_train_no_outliers.index]
             st.write("Applied IQR Outlier Detection and Handling")
+
+            # Download the dataset after IQR outlier handling
+            if st.button("Download Data after IQR Handling"):
+                download_csv(X_train_no_outliers.join(y_train_no_outliers), "outlier_handled_data.csv")
 
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
