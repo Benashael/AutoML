@@ -5,3 +5,4 @@ scikit-learn
 lazypredict
 scipy
 shap
+matplotlib
