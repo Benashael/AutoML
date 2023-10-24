@@ -1035,18 +1035,8 @@ elif page == "AI Explainability":
                     st.pyplot(shap.summary_plot(shap_values, selected_instance))
 
                     # Additional explanation metrics
-                    st.subheader("Additional Explanation Metrics")  
-                    
-                    # Force plot
-                    st.subheader("Force Plot")
-                    
-                    # Create a Plotly figure for the Force Plot
-                    force_plot = shap.initjs()
-                    fig = go.Figure(shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance))
-                    
-                    # Display the Plotly figure
-                    st.plotly_chart(fig)
-
+                    st.subheader("Additional Explanation Metric")  
+                
                     # Dependence Plots
                     st.subheader("Dependence Plots")
                     for feature in selected_other_variables:
