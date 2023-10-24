@@ -1034,14 +1034,6 @@ elif page == "AI Explainability":
                     st.set_option('deprecation.showPyplotGlobalUse', False)
                     st.pyplot(shap.summary_plot(shap_values, selected_instance))
 
-                    # Additional explanation metrics
-                    st.subheader("Additional Explanation Metric")  
-                
-                    # Dependence Plots
-                    st.subheader("Dependence Plots")
-                    for feature in selected_other_variables:
-                        shap.dependence_plot(feature, shap_values[0], selected_instance_values, interaction_index=selected_other_variables.index(feature))
-
                 else:
                     st.error("Please select the target variable and at least one other variable.")
             else:
