@@ -6,3 +6,4 @@ lazypredict
 scipy
 shap
 matplotlib
+ipython
