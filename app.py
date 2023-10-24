@@ -979,7 +979,7 @@ elif page == "Model Evaluation":
 
 # AI Explanation Page
 elif page == "AI Explainability":
-    st.title("AI Model Explainability")
+    st.title("AI Explainability")
 
     st.subheader("AI Model Explainability")
 
