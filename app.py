@@ -336,14 +336,14 @@ elif page == "Data Preprocessing":
                     training_data = pd.concat([X_train, y_train], axis=1)
                     csv = training_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Download Training Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Click here to Download Training Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
 
                 if st.button("Download Testing Data"):
                     testing_data = pd.concat([X_test, y_test], axis=1)
                     csv = testing_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Download Testing Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Click here to Download Testing Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
             else:
                 st.error("Please select a valid target variable and at least one other variable.")
