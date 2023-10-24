@@ -149,7 +149,7 @@ if page == "Home Page":
         "6. Don't hesitate to reach out for assistance or if you have any questions about using the application effectively."
     )
     st.markdown(
-        "7. You can also download the cleaned dataset, encoded dataset, training/testing datasets and clustered dataset for further analysis."
+        "7. You can also download the preprocessed dataset, cleaned dataset, encoded dataset, training/testing datasets and clustered dataset for further analysis."
     )
 
     st.markdown(
