@@ -212,7 +212,7 @@ elif page == "Data Profiling":
 
 # Data Encoding Page
 elif page == "Data Encoding":
-    st.title("Data Encoding App Page")
+    st.title("Data Encoding Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -486,7 +486,7 @@ elif page == "Data Cleaning":
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "Data Visualization":
-    st.title("Data Visualization App Page")
+    st.title("Data Visualization Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -673,7 +673,7 @@ elif page == "Hyperparameter Tuning":
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
 elif page == "ML Model Selection":
-    st.title("ML Model Selection App Page")
+    st.title("ML Model Selection Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -729,7 +729,7 @@ elif page == "ML Model Selection":
         st.warning("Please upload a dataset to continue.")
 
 elif page == "AutoML for Classification":
-    st.title("AutoML for Classification App Page")
+    st.title("AutoML for Classification Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -771,7 +771,7 @@ elif page == "AutoML for Classification":
         st.warning("Please upload a dataset to continue.")
 
 elif page == "AutoML for Regression":
-    st.title("AutoML for Regression App Page")
+    st.title("AutoML for Regression Page")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
