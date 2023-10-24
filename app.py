@@ -18,6 +18,8 @@ from scipy.stats import zscore
 import shap 
 import matplotlib
 import IPython
+import ploty
+import plotly.graph_objs as go
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
@@ -1033,27 +1035,17 @@ elif page == "AI Explainability":
                     st.pyplot(shap.summary_plot(shap_values, selected_instance))
 
                     # Additional explanation metrics
-                    st.subheader("Additional Explanation Metrics")
-
-                    # Force Plot
+                    st.subheader("Additional Explanation Metrics")  
+                    
+                    # Force plot
                     st.subheader("Force Plot")
                     
-                    # Calculate SHAP values
-                    shap_values = explainer.shap_values(selected_instance)
-
-                    st.set_option('deprecation.showPyplotGlobalUse', False)
-
-                    # Create a summary plot for the Force Plot
-                    shap.summary_plot(shap_values, selected_instance, show=False)
-                    plt.tight_layout()
+                    # Create a Plotly figure for the Force Plot
+                    force_plot = shap.initjs()
+                    fig = go.Figure(shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance))
                     
-                    # Save the summary plot as an image
-                    force_plot_image = "force_plot_summary.png"
-                    plt.savefig(force_plot_image)
-                    
-                    # Display the image using st.image()
-                    st.image(force_plot_image, use_column_width=True)
-
+                    # Display the Plotly figure
+                    st.plotly_chart(fig)
 
                     # Dependence Plots
                     st.subheader("Dependence Plots")
