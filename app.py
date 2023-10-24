@@ -1040,8 +1040,9 @@ elif page == "AI Explainability":
                     selected_instance_values = selected_instance.values[0]
                     st.set_option('deprecation.showPyplotGlobalUse', False)
                     shap.initjs()
-                    force_plot = shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance_values)
-                    st.write(force_plot)
+                    force_plot = shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance_values, matplotlib=True)
+                    force_plot_html = force_plot.html
+                    st.write(force_plot_html, unsafe_allow_html=True)
 
                     # Dependence Plots
                     st.subheader("Dependence Plots")
