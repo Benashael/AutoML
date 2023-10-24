@@ -1004,29 +1004,33 @@ elif page == "AI Explainability":
                 selected_target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
                 selected_other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != selected_target_variable])
 
-                # Subset the dataset based on the user's selection
-                X = data[selected_other_variables]
-                y = data[selected_target_variable]
+                # Check if the user has made mandatory selections
+                if selected_target_variable and selected_other_variables:
+                    # Subset the dataset based on the user's selection
+                    X = data[selected_other_variables]
+                    y = data[selected_target_variable]
 
-                # Explain the model's prediction for an instance
-                st.subheader("Explain Prediction for an Instance")
+                    # Explain the model's prediction for an instance
+                    st.subheader("Explain Prediction for an Instance")
 
-                # Select an instance from the dataset for prediction
-                instance_idx = st.slider("Select an Instance for Prediction", 0, len(X) - 1, 0)
+                    # Select an instance from the dataset for prediction
+                    instance_idx = st.slider("Select an Instance for Prediction", 0, len(X) - 1, 0)
 
-                # Get the selected instance data
-                selected_instance = X.iloc[[instance_idx]]
+                    # Get the selected instance data
+                    selected_instance = X.iloc[[instance_idx]]
 
-                # Fit the model
-                model.fit(X, y)
+                    # Fit the model
+                    model.fit(X, y)
 
-                # Explain the model's prediction for the selected instance
-                explainer = shap.TreeExplainer(model)  # Using SHAP for explanation
-                shap_values = explainer.shap_values(selected_instance)
+                    # Explain the model's prediction for the selected instance
+                    explainer = shap.TreeExplainer(model)  # Using SHAP for explanation
+                    shap_values = explainer.shap_values(selected_instance)
 
-                # Display the explanation plot
-                st.subheader("Explanation Plot")
-                st.pyplot(shap.summary_plot(shap_values, selected_instance))
+                    # Display the explanation plot
+                    st.subheader("Explanation Plot")
+                    st.pyplot(shap.summary_plot(shap_values, selected_instance))
+                else:
+                    st.error("Please select the target variable and at least one other variable.")
             else:
                 st.warning("Dataset size exceeds the maximum allowed (max rows: 5000, max columns: 50).")
         else:
