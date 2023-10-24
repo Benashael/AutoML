@@ -610,7 +610,7 @@ elif page == "Hyperparameter Tuning":
                 model = LinearRegression()
                 hyperparameters = {
                     "normalize": [st.checkbox("Normalize", value=True)],
-                    "n_jobs": [int(st.slider("Number of Jobs (n_jobs)", -1, 8))],
+                    "n_jobs": st.slider("Number of Jobs (n_jobs)", -1, 8),
                 }
     
             # Add hyperparameters for other models as needed
