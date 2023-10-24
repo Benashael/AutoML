@@ -593,27 +593,26 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Regressor (Regression)", "Logistic Regression (Classification)"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Logistic Regression (Classification)", "Linear Regression (Regression)"])
             # Add more machine learning models as needed
 
             model = None
             hyperparameters = {}
-
-            if selected_model == "Random Forest Regressor (Regression)":
-                model = RandomForestRegressor()
-                hyperparameters = {
-                    "n_estimators": int(st.slider("Number of Estimators (n_estimators)", 10, 1000, step=10)),
-                    "max_depth": int(st.slider("Maximum Depth (max_depth)", 1, 20)),
-                    "min_samples_split": int(st.slider("Minimum Samples Split (min_samples_split)", 2, 10)),
-                }
             
-            elif selected_model == "Logistic Regression (Classification)":
+            if selected_model == "Logistic Regression (Classification)":
                 model = LogisticRegression()
                 hyperparameters = {
                     "C": st.slider("Inverse of Regularization Strength (C)", 0.001, 10.0),
                     "max_iter": st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100),
                 }
 
+            elif selected_model == "Linear Regression (Regression)":  # Changed this part
+                model = LinearRegression()
+                hyperparameters = {
+                    "normalize": [st.checkbox("Normalize", value=True)],
+                    "n_jobs": [int(st.slider("Number of Jobs (n_jobs)", -1, 8))],
+                }
+    
             # Add hyperparameters for other models as needed
 
             if model is not None:
