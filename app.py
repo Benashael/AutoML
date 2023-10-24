@@ -17,6 +17,7 @@ import base64
 from scipy.stats import zscore 
 import shap 
 import matplotlib
+import IPython
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
 
