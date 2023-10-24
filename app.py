@@ -974,9 +974,9 @@ elif page == "Model Evaluation":
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
-# AI Explainability Page
+# AI Explanation Page
 elif page == "AI Explainability":
-    st.title("AI Explainability Page")
+    st.title("AI Model Explainability")
 
     st.subheader("AI Model Explainability")
 
@@ -1030,6 +1030,23 @@ elif page == "AI Explainability":
                     st.subheader("Explanation Plot")
                     st.set_option('deprecation.showPyplotGlobalUse', False)
                     st.pyplot(shap.summary_plot(shap_values, selected_instance))
+
+                    # Additional explanation metrics
+                    st.subheader("Additional Explanation Metrics")
+
+                    # Force Plot
+                    st.subheader("Force Plot")
+                    selected_instance_values = selected_instance.values[0]
+                    st.set_option('deprecation.showPyplotGlobalUse', False)
+                    shap.initjs()
+                    force_plot = shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance_values)
+                    st.write(force_plot)
+
+                    # Dependence Plots
+                    st.subheader("Dependence Plots")
+                    for feature in selected_other_variables:
+                        shap.dependence_plot(feature, shap_values[0], selected_instance_values, interaction_index=selected_other_variables.index(feature))
+
                 else:
                     st.error("Please select the target variable and at least one other variable.")
             else:
