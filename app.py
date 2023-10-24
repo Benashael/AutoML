@@ -18,7 +18,7 @@ from scipy.stats import zscore
 import shap 
 import matplotlib
 import IPython
-import ploty
+import plotly
 import plotly.graph_objs as go
 
 st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
