@@ -608,9 +608,10 @@ elif page == "Hyperparameter Tuning":
 
             elif selected_model == "Linear Regression (Regression)":  # Changed this part
                 model = LinearRegression()
-                hyperparameters = {
-                    "normalize": st.checkbox("Normalize", value=True),
-                    "n_jobs": st.slider("Number of Jobs (n_jobs)", -1, 8, value=1),
+                hyperparameters = { 
+                    "fit_intercept": st.checkbox("Fit Intercept", value=True),
+                    "positive": st.checkbox("Positive", value=False),
+                    "copy_X": st.checkbox("Copy X", value=True),
                 }
     
             # Add hyperparameters for other models as needed
