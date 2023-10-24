@@ -611,7 +611,7 @@ elif page == "Hyperparameter Tuning":
                 hyperparameters = {
                     "alpha": st.slider("Alpha (Regularization Strength)", 0.001, 10.0),
                     "fit_intercept": st.checkbox("Fit Intercept", value=True),
-                    "normalize": st.checkbox("Normalize", value=False),
+                    "max_iter": st.slider("Maximum Number of Iterations", 100, 1000, step=100),
                 }
 
             # Add hyperparameters for other models as needed
