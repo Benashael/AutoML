@@ -593,7 +593,7 @@ elif page == "Hyperparameter Tuning":
             st.error("Hyperparameter tuning is not supported for datasets with categorical features. Please preprocess your data first.")
         else:
             st.write("Machine Learning Model:")
-            selected_model = st.selectbox("Select a Machine Learning Model", ["Logistic Regression (Classification)", "Linear Regression (Regression)"])
+            selected_model = st.selectbox("Select a Machine Learning Model", ["Logistic Regression (Classification)", "Ridge Regression (Regression)"])
             # Add more machine learning models as needed
 
             model = None
@@ -606,14 +606,14 @@ elif page == "Hyperparameter Tuning":
                     "max_iter": st.slider("Maximum Iterations (max_iter)", 100, 1000, step=100),
                 }
 
-            elif selected_model == "Linear Regression (Regression)":  # Changed this part
-                model = LinearRegression()
-                hyperparameters = { 
+            elif selected_model == "Ridge Regression (Regression)":
+                model = Ridge()
+                hyperparameters = {
+                    "alpha": st.slider("Alpha (Regularization Strength)", 0.001, 10.0),
                     "fit_intercept": st.checkbox("Fit Intercept", value=True),
-                    "positive": st.checkbox("Positive", value=False),
-                    "copy_X": st.checkbox("Copy X", value=True),
+                    "normalize": st.checkbox("Normalize", value=False),
                 }
-    
+
             # Add hyperparameters for other models as needed
 
             if model is not None:
