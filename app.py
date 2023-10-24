@@ -979,46 +979,59 @@ elif page == "AI Explainability":
 
     st.subheader("AI Model Explainability")
 
-    # Select a machine learning model
-    selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Decision Tree Classifier"])
-    model = None
+    # Check if the dataset is available and meets the criteria
+    if data is not None and not data.empty:
+        # Check for categorical features
+        categorical_cols = data.select_dtypes(include=["object"]).columns
+        if categorical_cols.empty:
+            # Check dataset size
+            if data.shape[0] <= 5000 and data.shape[1] <= 50:
+                # Select a machine learning model
+                selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Decision Tree Classifier"])
+                model = None
 
-    if selected_model == "Random Forest Classifier":
-        model = RandomForestClassifier()
+                if selected_model == "Random Forest Classifier":
+                    model = RandomForestClassifier()
 
-    elif selected_model == "Logistic Regression":
-        model = LogisticRegression()
+                elif selected_model == "Logistic Regression":
+                    model = LogisticRegression()
 
-    elif selected_model == "Decision Tree Classifier":
-        model = DecisionTreeClassifier()
+                elif selected_model == "Decision Tree Classifier":
+                    model = DecisionTreeClassifier()
 
-    # Ask the user to select target variable and other variables
-    selected_target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
-    selected_other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != selected_target_variable])
+                # Ask the user to select target variable and other variables
+                selected_target_variable = st.selectbox("Select the Target Variable (y)", data.columns)
+                selected_other_variables = st.multiselect("Select Other Variables (X)", [col for col in data.columns if col != selected_target_variable])
 
-    # Subset the dataset based on the user's selection
-    X = user_dataset[selected_other_variables]
-    y = user_dataset[selected_target_variable]
+                # Subset the dataset based on the user's selection
+                X = data[selected_other_variables]
+                y = data[selected_target_variable]
 
-    # Explain the model's prediction for an instance
-    st.subheader("Explain Prediction for an Instance")
+                # Explain the model's prediction for an instance
+                st.subheader("Explain Prediction for an Instance")
 
-    # Select an instance from the dataset for prediction
-    instance_idx = st.slider("Select an Instance for Prediction", 0, len(X) - 1, 0)
+                # Select an instance from the dataset for prediction
+                instance_idx = st.slider("Select an Instance for Prediction", 0, len(X) - 1, 0)
 
-    # Get the selected instance data
-    selected_instance = X.iloc[[instance_idx]]
+                # Get the selected instance data
+                selected_instance = X.iloc[[instance_idx]]
 
-    # Fit the model
-    model.fit(X, y)
+                # Fit the model
+                model.fit(X, y)
 
-    # Explain the model's prediction for the selected instance
-    explainer = shap.TreeExplainer(model)  # Using SHAP for explanation
-    shap_values = explainer.shap_values(selected_instance)
+                # Explain the model's prediction for the selected instance
+                explainer = shap.TreeExplainer(model)  # Using SHAP for explanation
+                shap_values = explainer.shap_values(selected_instance)
 
-    # Display the explanation plot
-    st.subheader("Explanation Plot")
-    st.pyplot(shap.summary_plot(shap_values, selected_instance))
+                # Display the explanation plot
+                st.subheader("Explanation Plot")
+                st.pyplot(shap.summary_plot(shap_values, selected_instance))
+            else:
+                st.warning("Dataset size exceeds the maximum allowed (max rows: 5000, max columns: 50).")
+        else:
+            st.warning("The dataset contains categorical features and is not suitable for AI explainability.")
+    else:
+        st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
 
 # Handle errors and optimize performance
 try:
