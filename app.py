@@ -1037,12 +1037,23 @@ elif page == "AI Explainability":
 
                     # Force Plot
                     st.subheader("Force Plot")
-                    selected_instance_values = selected_instance.values[0]
+                    
+                    # Calculate SHAP values
+                    shap_values = explainer.shap_values(selected_instance)
+
                     st.set_option('deprecation.showPyplotGlobalUse', False)
-                    shap.initjs()
-                    force_plot = shap.force_plot(explainer.expected_value[0], shap_values[0], selected_instance_values, matplotlib=True)
-                    force_plot_html = force_plot.html
-                    st.write(force_plot_html, unsafe_allow_html=True)
+
+                    # Create a summary plot for the Force Plot
+                    shap.summary_plot(shap_values, selected_instance, show=False)
+                    plt.tight_layout()
+                    
+                    # Save the summary plot as an image
+                    force_plot_image = "force_plot_summary.png"
+                    plt.savefig(force_plot_image)
+                    
+                    # Display the image using st.image()
+                    st.image(force_plot_image, use_column_width=True)
+
 
                     # Dependence Plots
                     st.subheader("Dependence Plots")
