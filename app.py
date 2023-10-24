@@ -1028,6 +1028,7 @@ elif page == "AI Explainability":
 
                     # Display the explanation plot
                     st.subheader("Explanation Plot")
+                    st.set_option('deprecation.showPyplotGlobalUse', False)
                     st.pyplot(shap.summary_plot(shap_values, selected_instance))
                 else:
                     st.error("Please select the target variable and at least one other variable.")
