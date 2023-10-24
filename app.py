@@ -291,12 +291,27 @@ elif page == "Data Preprocessing":
                     st.write("Applied Min-Max Scaling:")
                     st.write(data)
 
+                    if st.button("Download Data after Min-Max Scaling"):
+                        cleaned_data = data
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_scaled.csv">Click here to Download Data after Min-Max Scaling</a>'
+                        st.markdown(href, unsafe_allow_html=True)
+
                 elif selected_scaling == "Standardization":
                     # Apply Standardization
                     scaler = StandardScaler()
                     data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
                     st.write("Applied Standardization:")
                     st.write(data)
+
+                    if st.button("Download Data after Standardization"):
+                        cleaned_data = data
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_standardized.csv">Click here to Download Data after Standardization</a>'
+                        st.markdown(href, unsafe_allow_html=True)
+                        
             else:
                 st.warning("No numerical columns found in the dataset for scaling.")
         else:
@@ -357,6 +372,13 @@ elif page == "Data Preprocessing":
                     st.write("Dataset after Z-Score Outlier Handling:")
                     st.write(data_no_outliers)
 
+                    if st.button("Download Data after Z-Score Handling"):
+                        cleaned_data = data_no_outliers
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Click here to Download Data after Z-Score Handling</a>'
+                        st.markdown(href, unsafe_allow_html=True)
+
                 elif selected_outlier_method == "IQR":
                     # Apply IQR method for outlier detection
                     Q1 = data[selected_x_column].quantile(0.25)
@@ -370,6 +392,13 @@ elif page == "Data Preprocessing":
                     st.write("Applied IQR Outlier Detection and Handling")
                     st.write("Dataset after IQR Outlier Handling:")
                     st.write(data_no_outliers)
+
+                    if st.button("Download Data after IQR Handling"):
+                        cleaned_data = data_no_outliers
+                        csv = cleaned_data.to_csv(index=False)
+                        b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Click here to Download Data after IQR Handling</a>'
+                        st.markdown(href, unsafe_allow_html=True)
 
             else:
                 st.warning("No numerical columns found in the dataset for outlier detection.")
