@@ -122,6 +122,11 @@ if page == "Home Page":
         "The **Model Evaluation Page** is where you can evaluate machine learning models on your dataset. Choose the problem type (classification or regression), select X and Y variables, and pick a model to see evaluation results."
     )
 
+    st.subheader("AI Explainability Page")
+    st.markdown(
+        "The **AI Explainability Page** allows you to explore AI model explainability with interactive plots and metrics."
+    )
+    
     st.subheader("Using the App")
     st.markdown(
         "1. Start on the **Home Page**, and then navigate to the pages that match your needs."
@@ -991,14 +996,11 @@ elif page == "AI Explainability":
             # Check dataset size
             if data.shape[0] <= 5000 and data.shape[1] <= 50:
                 # Select a machine learning model
-                selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Logistic Regression", "Decision Tree Classifier"])
+                selected_model = st.selectbox("Select a Machine Learning Model", ["Random Forest Classifier", "Decision Tree Classifier"])
                 model = None
 
                 if selected_model == "Random Forest Classifier":
                     model = RandomForestClassifier()
-
-                elif selected_model == "Logistic Regression":
-                    model = LogisticRegression()
 
                 elif selected_model == "Decision Tree Classifier":
                     model = DecisionTreeClassifier()
