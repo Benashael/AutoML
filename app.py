@@ -1048,7 +1048,7 @@ elif page == "AI Explainability":
 # About Page
 elif page == "About":
     st.title("🚀 About This App")
-    st.write("""
+    st.markdown("""
     Thank you for exploring this powerful machine learning tool! 🎉
 
     Our app lets you harness the magic of data by offering data preprocessing, hyperparameter tuning, AI model explainability, and more.
@@ -1062,10 +1062,9 @@ elif page == "About":
     Join us in unlocking the endless possibilities of machine learning.
 
     Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
-
-    Regards,
-    Team AI Hub
     """)
+    st.markdown("Regards,")
+    st.markdown("Team AI Hub")
 
 # Handle errors and optimize performance
 try:
