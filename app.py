@@ -1058,9 +1058,9 @@ elif page == "About":
     Explore, analyze, and transform data like never before. Join us in unlocking the endless possibilities of machine learning. Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
     """)
     st.markdown("""
-    Regards,
+    *_Regards,_*
     
-    Team AI Hub
+    *_Team AI Hub_*
     """)
 
 # Handle errors and optimize performance
