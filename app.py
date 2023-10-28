@@ -1054,10 +1054,12 @@ elif page == "About":
     Our app lets you harness the magic of data by offering data preprocessing, hyperparameter tuning, AI model explainability, and more. Created with love by Team AI Hub using Streamlit and Python.
 
     Let's supercharge your data science journey! 💡
+    
     Explore, analyze, and transform data like never before. Join us in unlocking the endless possibilities of machine learning. Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
     """)
     st.markdown("""
     Regards,
+    
     Team AI Hub
     """)
 
