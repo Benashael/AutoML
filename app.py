@@ -48,7 +48,7 @@ st.title("AutoML Application")
 st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation", "AI Explainability"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation", "AI Explainability", "About"])
 
 # Introduction Page
 if page == "Home Page":
@@ -1044,6 +1044,28 @@ elif page == "AI Explainability":
             st.warning("The dataset contains categorical features and is not suitable for AI explainability.")
     else:
         st.warning("Please upload a dataset in the 'Data Preprocessing' step to continue.")
+
+# About Page
+elif page == "About":
+    st.title("🚀 About This App")
+    st.write("""
+    Thank you for exploring this powerful machine learning tool! 🎉
+
+    Our app lets you harness the magic of data by offering data preprocessing, hyperparameter tuning, AI model explainability, and more.
+
+    Created with love by Team AI Hub using Streamlit and Python.
+
+    Let's supercharge your data science journey! 💡
+    
+    Explore, analyze, and transform data like never before.
+
+    Join us in unlocking the endless possibilities of machine learning.
+
+    Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
+
+    Regards,
+    Team AI Hub
+    """)
 
 # Handle errors and optimize performance
 try:
