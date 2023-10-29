@@ -305,7 +305,7 @@ elif page == "Data Preprocessing":
                         cleaned_data = data
                         csv = cleaned_data.to_csv(index=False)
                         b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_scaled.csv">Click here to Download Data after Min-Max Scaling</a>'
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_scaled.csv">Click here to download Data after Min-Max Scaling</a>'
                         st.markdown(href, unsafe_allow_html=True)
 
                 elif selected_scaling == "Standardization":
@@ -319,7 +319,7 @@ elif page == "Data Preprocessing":
                         cleaned_data = data
                         csv = cleaned_data.to_csv(index=False)
                         b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_standardized.csv">Click here to Download Data after Standardization</a>'
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_standardized.csv">Click here to download Data after Standardization</a>'
                         st.markdown(href, unsafe_allow_html=True)
                         
             else:
@@ -346,14 +346,14 @@ elif page == "Data Preprocessing":
                     training_data = pd.concat([X_train, y_train], axis=1)
                     csv = training_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Click here to Download Training Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="training_data.csv">Click here to download Training Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
 
                 if st.button("Download Testing Data"):
                     testing_data = pd.concat([X_test, y_test], axis=1)
                     csv = testing_data.to_csv(index=False)
                     b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Click here to Download Testing Data</a>'
+                    href = f'<a href="data:file/csv;base64,{b64}" download="testing_data.csv">Click here to download Testing Data</a>'
                     st.markdown(href, unsafe_allow_html=True)
             else:
                 st.error("Please select a valid target variable and at least one other variable.")
@@ -386,7 +386,7 @@ elif page == "Data Preprocessing":
                         cleaned_data = data_no_outliers
                         csv = cleaned_data.to_csv(index=False)
                         b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Click here to Download Data after Z-Score Handling</a>'
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_zscore.csv">Click here to download Data after Z-Score Handling</a>'
                         st.markdown(href, unsafe_allow_html=True)
 
                 elif selected_outlier_method == "IQR":
@@ -407,7 +407,7 @@ elif page == "Data Preprocessing":
                         cleaned_data = data_no_outliers
                         csv = cleaned_data.to_csv(index=False)
                         b64 = base64.b64encode(csv.encode()).decode()  # Convert to base64
-                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Click here to Download Data after IQR Handling</a>'
+                        href = f'<a href="data:file/csv;base64,{b64}" download="cleaned_data_iqr.csv">Click here to download Data after IQR Handling</a>'
                         st.markdown(href, unsafe_allow_html=True)
 
             else:
@@ -758,7 +758,7 @@ elif page == "ML Model Selection":
     else:
         st.warning("Please upload a dataset to continue.")
 
-
+# AutoML for Classification Page
 elif page == "AutoML for Classification":
     st.title("AutoML for Classification Page")
     if data is not None:
@@ -767,40 +767,47 @@ elif page == "AutoML for Classification":
         st.write("Dataset Shape:")
         st.write(data.shape)
 
-        st.subheader("AutoML for Classification")
+        # Check if the dataset has any categorical columns
+        has_categorical_columns = data.select_dtypes(include=['object']).empty
 
-        # Define the maximum allowed dataset size for classification
-        max_rows_for_classification = 5000
-        max_columns_for_classification = 50
+        if has_categorical_columns:
+            st.subheader("AutoML for Classification")
 
-        if data.shape[0] > max_rows_for_classification or data.shape[1] > max_columns_for_classification:
-            st.error(f"Dataset size exceeds the maximum allowed for classification (max rows: {max_rows_for_classification}, max columns: {max_columns_for_classification}).")
-        else:
-            target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
-            st.write("Select X Variables:")
-            X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
+            # Define the maximum allowed dataset size for classification
+            max_rows_for_classification = 5000
+            max_columns_for_classification = 50
 
-            if not X_variables:
-                st.warning("Please select one or more features (X) before running the AutoML for classification.")
+            if data.shape[0] > max_rows_for_classification or data.shape[1] > max_columns_for_classification:
+                st.error(f"Dataset size exceeds the maximum allowed for classification (max rows: {max_rows_for_classification}, max columns: {max_columns_for_classification}).")
             else:
-                test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
-                random_state = st.slider("Select Random State", 1, 100, 42, 1)
+                target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+                st.write("Select X Variables:")
+                X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
 
-                X = data[X_variables]
-                Y = data[target_variable]
+                if not X_variables:
+                    st.warning("Please select one or more features (X) before running the AutoML for classification.")
+                else:
+                    test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
+                    random_state = st.slider("Select Random State", 1, 100, 42, 1)
 
-                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+                    X = data[X_variables]
+                    Y = data[target_variable]
 
-                st.write("Classification Models:")
-                classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
-                for model in classification_models:
-                    model.fit(X_train, Y_train)
-                    Y_pred = model.predict(X_test)
-                    st.write(f"Model: {type(model).__name__}")
-                    st.write(f"Accuracy Score: {accuracy_score(Y_test, Y_pred)}")
+                    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+
+                    st.write("Classification Models:")
+                    classification_models = [RandomForestClassifier(), LogisticRegression(), DecisionTreeClassifier()]
+                    for model in classification_models:
+                        model.fit(X_train, Y_train)
+                        Y_pred = model.predict(X_test)
+                        st.write(f"Model: {type(model).__name__}")
+                        st.write(f"Accuracy Score: {accuracy_score(Y_test, Y_pred)}")
+        else:
+            st.warning("This page is only available for datasets without categorical columns.")
     else:
         st.warning("Please upload a dataset to continue.")
 
+# AutoML for Regression Page 
 elif page == "AutoML for Regression":
     st.title("AutoML for Regression Page")
     if data is not None:
@@ -809,37 +816,43 @@ elif page == "AutoML for Regression":
         st.write("Dataset Shape:")
         st.write(data.shape)
 
-        st.subheader("AutoML for Regression")
+        # Check if the dataset contains any categorical columns
+        has_categorical_columns = data.select_dtypes(include=['object']).shape[1] > 0
 
-        # Define the maximum allowed dataset size for regression
-        max_rows_for_regression = 5000
-        max_columns_for_regression = 50
-
-        if data.shape[0] > max_rows_for_regression or data.shape[1] > max_columns_for_regression:
-            st.error(f"Dataset size exceeds the maximum allowed for regression (max rows: {max_rows_for_regression}, max columns: {max_columns_for_regression}).")
+        if has_categorical_columns:
+            st.error("AutoML for Regression is enabled only for datasets without categorical columns.")
         else:
-            target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
-            st.write("Select X Variables:")
-            X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
+            st.subheader("AutoML for Regression")
 
-            if not X_variables:
-                st.warning("Please select one or more features (X) before running the AutoML for regression.")
+            # Define the maximum allowed dataset size for regression
+            max_rows_for_regression = 5000
+            max_columns_for_regression = 50
+
+            if data.shape[0] > max_rows_for_regression or data.shape[1] > max_columns_for_regression:
+                st.error(f"Dataset size exceeds the maximum allowed for regression (max rows: {max_rows_for_regression}, max columns: {max_columns_for_regression}).")
             else:
-                test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
-                random_state = st.slider("Select Random State", 1, 100, 42, 1)
+                target_variable = st.selectbox("Select Target Variable (Y)", data.columns)
+                st.write("Select X Variables:")
+                X_variables = st.multiselect("Select Features (X)", [col for col in data.columns if col != target_variable])
 
-                X = data[X_variables]
-                Y = data[target_variable]
+                if not X_variables:
+                    st.warning("Please select one or more features (X) before running the AutoML for regression.")
+                else:
+                    test_size = st.slider("Select Test Size (Fraction)", 0.1, 0.5, 0.2, 0.01)
+                    random_state = st.slider("Select Random State", 1, 100, 42, 1)
 
-                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+                    X = data[X_variables]
+                    Y = data[target_variable]
 
-                st.write("Regression Models:")
-                regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
-                for model in regression_models:
-                    model.fit(X_train, Y_train)
-                    Y_pred = model.predict(X_test)
-                    st.write(f"Model: {type(model).__name__}")
-                    st.write(f"Mean Squared Error: {mean_squared_error(Y_test, Y_pred)}")
+                    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
+
+                    st.write("Regression Models:")
+                    regression_models = [RandomForestRegressor(), LinearRegression(), Ridge(), Lasso()]
+                    for model in regression_models:
+                        model.fit(X_train, Y_train)
+                        Y_pred = model.predict(X_test)
+                        st.write(f"Model: {type(model).__name__}")
+                        st.write(f"Mean Squared Error: {mean_squared_error(Y_test, Y_pred)}")
     else:
         st.warning("Please upload a dataset to continue.")
         
@@ -855,8 +868,8 @@ elif page == "AutoML for Clustering":
         st.write(data.shape)
 
         # Define the maximum allowed dataset size for clustering
-        max_rows_for_clustering = 5000
-        max_columns_for_clustering = 50
+        max_rows_for_clustering = 2000
+        max_columns_for_clustering = 25
 
         if data.shape[0] > max_rows_for_clustering or data.shape[1] > max_columns_for_clustering:
             st.error(f"Dataset size exceeds the maximum allowed for clustering (max rows: {max_rows_for_clustering}, max columns: {max_columns_for_clustering}).")
