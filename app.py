@@ -499,16 +499,22 @@ elif page == "Data Cleaning":
 elif page == "Data Visualization":
     st.title("Data Visualization Page")
     if data is not None:
-        st.write("Dataset:")
-        st.write(data)
-    
-        st.subheader("Data Visualization")
-        st.write("Select Columns for Visualization:")
-        columns_to_visualize = st.multiselect("Select Columns", data.columns)
-        if columns_to_visualize:
-            st.line_chart(data[columns_to_visualize])
-            st.bar_chart(data[columns_to_visualize])
-            st.area_chart(data[columns_to_visualize])
+        # Filter out only numerical columns
+        numerical_columns = data.select_dtypes(include=['int64', 'float64'])
+        
+        if not numerical_columns.empty:
+            st.write("Dataset:")
+            st.write(data)
+
+            st.subheader("Data Visualization")
+            st.write("Select Columns for Visualization:")
+            columns_to_visualize = st.multiselect("Select Columns", numerical_columns.columns)
+            if columns_to_visualize:
+                st.line_chart(data[columns_to_visualize])
+                st.bar_chart(data[columns_to_visualize])
+                st.area_chart(data[columns_to_visualize])
+        else:
+            st.warning("No numerical columns found in the dataset. Please upload a dataset with numerical data to continue.")
     else:
         st.warning("Please upload a dataset to continue.")
         
