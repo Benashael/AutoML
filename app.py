@@ -894,7 +894,7 @@ elif page == "AutoML for Clustering":
                 # Download the dataset with added clusters column
                 csv_data_encoded = X_encoded.to_csv(index=False)
                 b64 = base64.b64encode(csv_data_encoded.encode()).decode()
-                href = f'<a href="data:file/csv;base64,{b64}" download="clustered_data.csv">Click here to Download Clustered Dataset</a>'
+                href = f'<a href="data:file/csv;base64,{b64}" download="clustered_data.csv">Click here to download Clustered Dataset</a>'
                 st.markdown(href, unsafe_allow_html=True)
 
                 st.write(f"Performed K-Means clustering with {num_clusters} clusters.")
@@ -907,11 +907,15 @@ elif page == "Model Evaluation":
     st.title("Model Evaluation Page")
 
     # Define the maximum allowed dataset size for model evaluation
-    max_rows_for_evaluation = 10000
-    max_columns_for_evaluation = 100
+    max_rows_for_evaluation = 5000
+    max_columns_for_evaluation = 50
 
     if data is not None:
-        if data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
+        # Check for categorical columns
+        categorical_columns = data.select_dtypes(include=['object']).columns
+        if not categorical_columns.empty:
+            st.warning("The dataset contains categorical columns. Model evaluation is only supported for datasets without categorical columns.")
+        elif data.shape[0] > max_rows_for_evaluation or data.shape[1] > max_columns_for_evaluation:
             st.warning(f"Note: The dataset size exceeds the maximum allowed for model evaluation (max rows: {max_rows_for_evaluation}, max columns: {max_columns_for_evaluation}).")
         else:
             # Select Problem Type
@@ -952,15 +956,12 @@ elif page == "Model Evaluation":
                             # Calculate evaluation metrics
                             accuracy = accuracy_score(y_test, y_pred)
                             f1 = f1_score(y_test, y_pred, average="weighted")
-                            #report = classification_report(y_test, y_pred, target_names=[str(class_label) for class_label in model.classes_])
 
                             st.write(f"Selected Classification Model: {selected_model}")
                             st.write(f"X Variables: {', '.join(x_variables)}")
                             st.write(f"Y Variable: {y_variable}")
                             st.write(f"Accuracy: {accuracy:.2f}")
                             st.write(f"F1 Score: {f1:.2f}")
-                            #st.subheader("Classification Report:")
-                            #st.text(report)
                         else:
                             st.error("Invalid variable names. Please ensure at least one X variable is selected.")
                 else:
