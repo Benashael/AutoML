@@ -446,7 +446,7 @@ elif page == "Data Cleaning":
             categorical_features = data.select_dtypes(include=['object']).columns.tolist()
 
             if not categorical_features:
-                st.warning("Note: The dataset has no categorical features, so you cannot use the 'mean' or 'median' methods.")
+                st.warning("Note: The dataset has no categorical features, so you can use the 'mean' or 'median' methods.")
             else:
                 st.write("Categorical Features:")
                 st.write(categorical_features)
@@ -495,6 +495,7 @@ elif page == "Data Cleaning":
     else:
         st.warning("Please upload a dataset in the 'Data Cleaning' step to continue.")
 
+# Data Visualization Page
 elif page == "Data Visualization":
     st.title("Data Visualization Page")
     if data is not None:
