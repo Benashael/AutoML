@@ -1,2 +1,2 @@
 # AutoML
-An web app which automates Machine Learning Tasks
+A web app which automates Machine Learning Tasks
