@@ -21,7 +21,7 @@ import IPython
 import plotly
 import plotly.graph_objs as go
 
-st.set_page_config(page_title="AutoML Application", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="AutoDS Application", page_icon="🤖", layout="wide")
 
 # Define a function to load your dataset
 @st.cache_data
@@ -44,8 +44,8 @@ if uploaded_file is not None:
         data = None  # Set data to None if it's not valid
 
 # App description
-st.title("AutoML Application")
-st.write("This application allows you to perform various AutoML tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
+st.title("AutoDS Application")
+st.write("This application allows you to perform various AutoDS tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
 page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation", "AI Explainability", "About"])
@@ -54,7 +54,7 @@ page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Da
 if page == "Home Page":
     st.title("Introduction")
 
-    st.header("Welcome to the AutoML Application!")
+    st.header("Welcome to the AutoDS Application!")
     st.write("This application is designed to help you streamline the process of data analysis and machine learning model selection. Follow the steps below to make the most of this application:")
 
     st.subheader("Home Page")
@@ -153,7 +153,7 @@ if page == "Home Page":
     )
 
     st.markdown(
-        "Enjoy using the AutoML Application and have a productive data analysis and model selection experience!"
+        "Enjoy using the AutoDS Application and have a productive data analysis and model selection experience!"
     )
 
 # Data Profiling Page
@@ -1084,13 +1084,13 @@ elif page == "AI Explainability":
 elif page == "About":
     st.title("🚀 About This App")
     st.markdown("""
-    Thank you for exploring this powerful machine learning tool! 🎉
+    Thank you for exploring this powerful data science tool! 🎉
 
     Our app lets you harness the magic of data by offering data preprocessing, hyperparameter tuning, AI model explainability, and more. Created with love by Team AI Hub using Streamlit and Python.
 
     Let's supercharge your data science journey! 💡
     
-    Explore, analyze, and transform data like never before. Join us in unlocking the endless possibilities of machine learning. Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
+    Explore, analyze, and transform data like never before. Join us in unlocking the endless possibilities of data science. Ready to embark on your data adventure? Let's get started by exploring other products of AI Hub!
     """)
     st.markdown("""
     *_Regards,_*
