@@ -48,7 +48,7 @@ st.title("AutoDS Application")
 st.write("This application allows you to perform various AutoDS tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
 
 # Create Streamlit pages
-page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "AutoML for Classification", "AutoML for Regression", "AutoML for Clustering", "Model Evaluation", "AI Explainability", "About"])
+page = st.sidebar.radio("**Select a Page**", ["Home Page", "Data Profiling", "Data Encoding", "Data Preprocessing", "Data Cleaning", "Data Visualization", "Feature Selection", "Hyperparameter Tuning", "ML Model Selection", "Classification (ML)", "Regression (ML)", "Clustering (ML)", "Model Evaluation", "AI Explainability", "About"])
 
 # Introduction Page
 if page == "Home Page":
@@ -102,19 +102,19 @@ if page == "Home Page":
         "The **ML Model Selection Page** helps you choose the right machine learning model based on the problem type (classification, regression, or time series). Pick a dataset and select the target variable to find the best machine learning model."
     )
 
-    st.subheader("AutoML for Classification Page")
+    st.subheader("Classification (ML) Page")
     st.markdown(
-        "The **AutoML for Classification Page** allows you to perform automated machine learning (AutoML) for classification problems using the `lazyClassifier` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
+        "The **Classification (ML) Page** allows you to perform automated machine learning (AutoML) for classification problems using the `lazyClassifier` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
     )
 
-    st.subheader("AutoML for Regression Page")
+    st.subheader("Regression (ML) Page")
     st.markdown(
-        "The **AutoML for Regression Page** enables you to perform automated machine learning (AutoML) for regression problems using the `lazyRegression` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
+        "The **Regression (ML) Page** enables you to perform automated machine learning (AutoML) for regression problems using the `lazyRegression` library. Select a dataset, choose the target variable, and run the AutoML algorithm."
     )
 
-    st.subheader("AutoML for Clustering Page")
+    st.subheader("Clustering (ML) Page")
     st.markdown(
-        "The **AutoML for Clustering Page** empowers you to perform automated machine learning (AutoML) for clustering problems. Clustering is a technique used to group similar data points together. In this page, you can select a dataset and choose the number of clusters. Note: This task is suitable for small datasets."
+        "The **Clustering (ML) Page** empowers you to perform automated machine learning (AutoML) for clustering problems. Clustering is a technique used to group similar data points together. In this page, you can select a dataset and choose the number of clusters. Note: This task is suitable for small datasets."
     )
     
     st.subheader("Model Evaluation Page")
@@ -759,8 +759,8 @@ elif page == "ML Model Selection":
         st.warning("Please upload a dataset to continue.")
 
 # AutoML for Classification Page
-elif page == "AutoML for Classification":
-    st.title("AutoML for Classification Page")
+elif page == "Classification (ML)":
+    st.title("Classification (ML)")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -808,8 +808,8 @@ elif page == "AutoML for Classification":
         st.warning("Please upload a dataset to continue.")
 
 # AutoML for Regression Page 
-elif page == "AutoML for Regression":
-    st.title("AutoML for Regression Page")
+elif page == "Regression (ML)":
+    st.title("Regression (ML)")
     if data is not None:
         st.write("Dataset:")
         st.write(data)
@@ -857,8 +857,8 @@ elif page == "AutoML for Regression":
         st.warning("Please upload a dataset to continue.")
         
 # AutoML for Clustering Page
-elif page == "AutoML for Clustering":
-    st.title("AutoML for Clustering Page")
+elif page == "Clustering (ML)":
+    st.title("Clustering (ML)")
 
     # Check if the dataset is available
     if data is not None:
