@@ -46,7 +46,7 @@ if uploaded_file is not None:
 aihub_url = "https://sites.google.com/view/aihub-1?usp=sharing"
 
 if st.button("Return to AIHub"):
-    st.link("Click here to move back to AIHub", aihub_url)
+    st.markdown(f"[Click here to move back to AIHub]({aihub_url})"), aunsafe_allow_html=True)
     
 # App description
 st.title("AutoDS Application")
