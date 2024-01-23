@@ -43,6 +43,9 @@ if uploaded_file is not None:
         st.error("The uploaded dataset is not in a valid format or language. Please upload a valid dataset in CSV format.")
         data = None  # Set data to None if it's not valid
 
+if st.button("Return to AIHub"):
+    webbrowser.open("https://sites.google.com/view/aihub-1?usp=sharing")
+    
 # App description
 st.title("AutoDS Application")
 st.write("This application allows you to perform various AutoDS tasks, including data cleaning, encoding, visualization, model selection, and more. You can upload your dataset and choose from a variety of machine learning tasks.")
