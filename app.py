@@ -43,8 +43,10 @@ if uploaded_file is not None:
         st.error("The uploaded dataset is not in a valid format or language. Please upload a valid dataset in CSV format.")
         data = None  # Set data to None if it's not valid
 
+aihub_url = "https://sites.google.com/view/aihub-1?usp=sharing"
+
 if st.button("Return to AIHub"):
-    st.markdown("https://sites.google.com/view/aihub-1?usp=sharing", unsafe_allow_html=True)
+    st.markdown("Click here to move back to AIHub", aihub_url)
     
 # App description
 st.title("AutoDS Application")
