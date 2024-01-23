@@ -44,8 +44,7 @@ if uploaded_file is not None:
         data = None  # Set data to None if it's not valid
 
 if st.button("Return to AIHub"):
-    hyperlink = "https://sites.google.com/view/aihub-1?usp=sharing"
-    webbrowser.open(hyperlink)
+    st.markdown("https://sites.google.com/view/aihub-1?usp=sharing", unsafe_allow_html=True)
     
 # App description
 st.title("AutoDS Application")
