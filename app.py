@@ -43,9 +43,13 @@ if uploaded_file is not None:
         st.error("The uploaded dataset is not in a valid format or language. Please upload a valid dataset in CSV format.")
         data = None  # Set data to None if it's not valid
 
+datasetgenerator_url = "https://dataset-generator-is9nga2pbyrqjzapl5wa5m.streamlit.app/"
+if st.button("Explore with different Datasets"):
+    st.write(f'<a href="{datasetgenerator_url}" target="_blank">Click here to generate and download different datasets</a>', unsafe_allow_html=True)
+
 aihub_url = "https://sites.google.com/view/aihub-1?usp=sharing"
-if st.button("Return to AIHub"):
-    st.write(f'<a href="{aihub_url}" target="_blank">Click here to move back to AIHub</a>', unsafe_allow_html=True)
+if st.button("Return to AI Hub"):
+    st.write(f'<a href="{aihub_url}" target="_blank">Click here to move back to AI Hub</a>', unsafe_allow_html=True)
     
 # App description
 st.title("AutoDS Application")
