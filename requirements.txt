@@ -2,7 +2,7 @@ streamlit
 pandas
 numpy
 scikit-learn
-lazypredict==0.2.9
+lazypredict
 scipy
 shap
 matplotlib
