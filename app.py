@@ -368,9 +368,9 @@ elif page == "Data Preprocessing":
         else:
             st.error("Invalid test size. Please select a test size greater than 0.")
 
-        # Step 4: Outlier Detection and Handling (Limit to datasets with max size)
+        # Step 3: Outlier Detection and Handling (Limit to datasets with max size)
         if data.shape[0] <= 5000 and data.shape[1] <= 50:
-            st.subheader("Step 4: Outlier Detection and Handling")
+            st.subheader("Step 3: Outlier Detection and Handling")
 
             outlier_methods = ["Z-Score", "IQR"]
             selected_outlier_method = st.radio("Select Outlier Detection Method:", outlier_methods)
